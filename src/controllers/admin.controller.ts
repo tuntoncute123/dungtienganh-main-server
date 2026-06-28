@@ -1,5 +1,6 @@
 import { Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import * as bcrypt from 'bcryptjs';
 
 @Controller('api/admin')
 export class AdminController {
@@ -228,6 +229,34 @@ export class AdminController {
         },
       });
     }
+
+    // 5. Seed Users
+    await this.prisma.user.deleteMany();
+    const salt = await bcrypt.genSalt(10);
+    const adminPassword = await bcrypt.hash("admin123", salt);
+    const studentPassword = await bcrypt.hash("student123", salt);
+
+    await this.prisma.user.create({
+      data: {
+        username: "admin",
+        password: adminPassword,
+        name: "Cô giáo Dung",
+        role: "admin",
+        allowedCourses: [],
+        allowedExams: [],
+      },
+    });
+
+    await this.prisma.user.create({
+      data: {
+        username: "student",
+        password: studentPassword,
+        name: "Nguyễn Văn Học Sinh",
+        role: "student",
+        allowedCourses: ["toan-9-he-2k12", "tieng-anh-9-he-2k12"],
+        allowedExams: ["so-ha-noi-2026"],
+      },
+    });
 
     console.log('Seeding complete successfully via API!');
     return { success: true, message: 'Database seeded successfully!' };
