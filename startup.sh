@@ -18,4 +18,4 @@ if [ $MIGRATE_STATUS -ne 0 ]; then
 fi
 
 echo "Starting NestJS application on port 3001..."
-exec node dist/src/main
+exec node dist/main
