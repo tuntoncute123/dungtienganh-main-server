@@ -1,31 +1,32 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { PrismaModule } from './prisma/prisma.module';
-import { StoriesController } from './controllers/stories.controller';
-import { LessonsController } from './controllers/lessons.controller';
-import { CommentsController } from './controllers/comments.controller';
-import { FlashcardsController } from './controllers/flashcards.controller';
-import { ExamsController } from './controllers/exams.controller';
-import { UploadController } from './controllers/upload.controller';
-import { AdminController } from './controllers/admin.controller';
-import { AuthController } from './controllers/auth.controller';
-import { UsersController } from './controllers/users.controller';
+import { AppController } from './app.controller.js';
+import { AppService } from './app.service.js';
+import { PrismaModule } from './prisma/prisma.module.js';
+import { AuthModule } from './auth/auth.module.js';
+import { UsersModule } from './users/users.module.js';
+import { LessonsModule } from './lessons/lessons.module.js';
+import { StoriesModule } from './stories/stories.module.js';
+import { CommentsModule } from './comments/comments.module.js';
+import { FlashcardsModule } from './flashcards/flashcards.module.js';
+import { ExamsModule } from './exams/exams.module.js';
+import { UploadModule } from './upload/upload.module.js';
+import { AdminModule } from './admin/admin.module.js';
 
 @Module({
-  imports: [PrismaModule],
-  controllers: [
-    AppController,
-    StoriesController,
-    LessonsController,
-    CommentsController,
-    FlashcardsController,
-    ExamsController,
-    UploadController,
-    AdminController,
-    AuthController,
-    UsersController,
+  imports: [
+    PrismaModule,
+    AuthModule,
+    UsersModule,
+    LessonsModule,
+    StoriesModule,
+    CommentsModule,
+    FlashcardsModule,
+    ExamsModule,
+    UploadModule,
+    AdminModule,
   ],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
+
