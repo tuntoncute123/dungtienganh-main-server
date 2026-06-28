@@ -9,6 +9,8 @@ import { FlashcardsController } from './controllers/flashcards.controller';
 import { ExamsController } from './controllers/exams.controller';
 import { UploadController } from './controllers/upload.controller';
 import { AdminController } from './controllers/admin.controller';
+import { AuthController } from './controllers/auth.controller';
+import { UsersController } from './controllers/users.controller';
 
 @Module({
   imports: [PrismaModule],
@@ -21,6 +23,8 @@ import { AdminController } from './controllers/admin.controller';
     ExamsController,
     UploadController,
     AdminController,
+    AuthController,
+    UsersController,
   ],
   providers: [AppService],
 })

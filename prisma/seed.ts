@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import * as dotenv from "dotenv";
+import * as bcrypt from "bcryptjs";
 
 dotenv.config();
 
@@ -238,6 +239,36 @@ async function main() {
   }
 
   console.log("Seeded Exams!");
+
+  // 5. Seed Users
+  await prisma.user.deleteMany();
+  const salt = await bcrypt.genSalt(10);
+  const adminPassword = await bcrypt.hash("admin123", salt);
+  const studentPassword = await bcrypt.hash("student123", salt);
+
+  await prisma.user.create({
+    data: {
+      username: "admin",
+      password: adminPassword,
+      name: "Cô giáo Dung",
+      role: "admin",
+      allowedCourses: [],
+      allowedExams: [],
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      username: "student",
+      password: studentPassword,
+      name: "Nguyễn Văn Học Sinh",
+      role: "student",
+      allowedCourses: ["toan-9-he-2k12", "tieng-anh-9-he-2k12"],
+      allowedExams: ["so-ha-noi-2026"],
+    },
+  });
+
+  console.log("Seeded Users!");
   console.log("Seeding complete successfully!");
 }
 
