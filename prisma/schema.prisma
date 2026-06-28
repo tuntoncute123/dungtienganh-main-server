@@ -1,0 +1,84 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Story model
+model Story {
+  id        String   @id @default(uuid())
+  name      String
+  image     String
+  avatar    String?
+  createdAt DateTime @default(now())
+}
+
+// Lesson model
+model Lesson {
+  id         String    @id @default(uuid())
+  title      String
+  videoUrl   String?
+  duration   String
+  thumbnail  String?
+  playlistId String?
+  createdAt  DateTime  @default(now())
+  comments   Comment[]
+}
+
+// Comment model
+model Comment {
+  id         String   @id @default(uuid())
+  userName   String
+  userAvatar String?
+  content    String
+  createdAt  DateTime @default(now())
+  lessonId   String?
+  lesson     Lesson?  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+}
+
+// FlashcardDeck model
+model FlashcardDeck {
+  id            String          @id @default(uuid())
+  category      String
+  categoryLabel String
+  title         String
+  cardCount     Int             @default(0)
+  isLocked      Boolean         @default(false)
+  type          String          @default("system") // "system" | "custom"
+  createdAt     DateTime        @default(now())
+  cards         FlashcardCard[]
+}
+
+// FlashcardCard model
+model FlashcardCard {
+  id        String        @id @default(uuid())
+  deckId    String
+  front     String
+  back      String
+  deck      FlashcardDeck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+}
+
+// Exam model
+model Exam {
+  id          String     @id @default(uuid())
+  title       String
+  category    String     // "school-exams" | "mock-test" | "progress-test"
+  duration    Int        // in minutes
+  cardCount   Int        @default(0)
+  createdAt   DateTime   @default(now())
+  questions   Question[]
+}
+
+// Question model
+model Question {
+  id            String   @id @default(uuid())
+  examId        String
+  number        Int
+  text          String
+  options       Json     // Store options as { A: "text", B: "text", C: "text", D: "text" }
+  correctAnswer String   // "A" | "B" | "C" | "D" or string for open-ended
+  explanation   String?
+  exam          Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+}
