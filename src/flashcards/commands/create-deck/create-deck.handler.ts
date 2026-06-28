@@ -1,18 +1,22 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreateDeckCommand } from './create-deck.command.js';
 import { PrismaService } from '../../../prisma/prisma.service.js';
+import { RedisService } from '../../../redis/redis.service.js';
 import { BadRequestException } from '@nestjs/common';
 
 @CommandHandler(CreateDeckCommand)
 export class CreateDeckHandler implements ICommandHandler<CreateDeckCommand> {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly redis: RedisService,
+  ) {}
 
   async execute(command: CreateDeckCommand) {
     const { category, categoryLabel, title, isLocked, type, cards } = command.dto;
     if (!category || !title) throw new BadRequestException('Category and title are required');
 
     const cardList = Array.isArray(cards) ? cards : [];
-    return this.prisma.flashcardDeck.create({
+    const deck = await this.prisma.flashcardDeck.create({
       data: {
         category,
         categoryLabel: categoryLabel || category,
@@ -24,5 +28,8 @@ export class CreateDeckHandler implements ICommandHandler<CreateDeckCommand> {
       },
       include: { cards: true },
     });
+    await this.redis.del('flashcards:all');
+    return deck;
   }
 }
+

@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { LoginCommand } from './commands/login/login.command.js';
+import { LogoutCommand } from './commands/logout/logout.command.js';
 import { GetMeQuery } from './queries/get-me/get-me.query.js';
 import { LoginDto } from './dto/login.dto.js';
 
@@ -27,6 +28,17 @@ export class AuthController {
     return this.commandBus.execute(new LoginCommand(dto));
   }
 
+  // POST /api/auth/logout
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  async logout(@Headers('authorization') authHeader?: string) {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      throw new UnauthorizedException('No token provided');
+    }
+    const token = authHeader.split(' ')[1];
+    return this.commandBus.execute(new LogoutCommand(token));
+  }
+
   // GET /api/auth/me
   @Get('me')
   async getMe(@Headers('authorization') authHeader?: string) {
@@ -37,3 +49,4 @@ export class AuthController {
     return this.queryBus.execute(new GetMeQuery(token));
   }
 }
+

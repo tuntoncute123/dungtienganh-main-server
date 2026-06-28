@@ -1,18 +1,25 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UpdateLessonCommand } from './update-lesson.command.js';
 import { PrismaService } from '../../../prisma/prisma.service.js';
+import { RedisService } from '../../../redis/redis.service.js';
 import { BadRequestException } from '@nestjs/common';
 
 @CommandHandler(UpdateLessonCommand)
 export class UpdateLessonHandler implements ICommandHandler<UpdateLessonCommand> {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly redis: RedisService,
+  ) {}
 
   async execute(command: UpdateLessonCommand) {
     const { id, title, videoUrl, duration, thumbnail, playlistId, exerciseId } = command.dto;
     if (!id) throw new BadRequestException('ID is required');
-    return this.prisma.lesson.update({
+    const lesson = await this.prisma.lesson.update({
       where: { id },
       data: { title, videoUrl, duration, thumbnail, playlistId, exerciseId },
     });
+    await this.redis.del('lessons:all', `lessons:${id}`);
+    return lesson;
   }
 }
+

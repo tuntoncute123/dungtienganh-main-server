@@ -1,11 +1,15 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreateStoryCommand } from './create-story.command.js';
 import { PrismaService } from '../../../prisma/prisma.service.js';
+import { RedisService } from '../../../redis/redis.service.js';
 import { BadRequestException } from '@nestjs/common';
 
 @CommandHandler(CreateStoryCommand)
 export class CreateStoryHandler implements ICommandHandler<CreateStoryCommand> {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly redis: RedisService,
+  ) {}
 
   async execute(command: CreateStoryCommand) {
     const { name, image, avatar, type, isApproved } = command.dto;
@@ -18,7 +22,7 @@ export class CreateStoryHandler implements ICommandHandler<CreateStoryCommand> {
       approved = isApproved;
     }
 
-    return this.prisma.story.create({
+    const story = await this.prisma.story.create({
       data: {
         name,
         image,
@@ -27,5 +31,8 @@ export class CreateStoryHandler implements ICommandHandler<CreateStoryCommand> {
         isApproved: approved,
       },
     });
+    await this.redis.del('stories:approved', 'stories:admin');
+    return story;
   }
 }
+

@@ -1,11 +1,15 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UpdateExamCommand } from './update-exam.command.js';
 import { PrismaService } from '../../../prisma/prisma.service.js';
+import { RedisService } from '../../../redis/redis.service.js';
 import { BadRequestException } from '@nestjs/common';
 
 @CommandHandler(UpdateExamCommand)
 export class UpdateExamHandler implements ICommandHandler<UpdateExamCommand> {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly redis: RedisService,
+  ) {}
 
   async execute(command: UpdateExamCommand) {
     const { id, title, category, duration, questions } = command.dto;
@@ -20,7 +24,7 @@ export class UpdateExamHandler implements ICommandHandler<UpdateExamCommand> {
       });
     }
 
-    return this.prisma.exam.update({
+    const exam = await this.prisma.exam.update({
       where: { id },
       data: {
         title,
@@ -41,5 +45,8 @@ export class UpdateExamHandler implements ICommandHandler<UpdateExamCommand> {
       },
       include: { questions: true },
     });
+    await this.redis.del('exams:all', `exams:${id}`, category ? `exams:category:${category}` : '');
+    return exam;
   }
 }
+
