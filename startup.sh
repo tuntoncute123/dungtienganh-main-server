@@ -13,14 +13,9 @@ npx prisma migrate deploy
 MIGRATE_STATUS=$?
 echo "Migration finished with exit code: $MIGRATE_STATUS"
 if [ $MIGRATE_STATUS -ne 0 ]; then
-  echo "Error: Prisma migration failed! Keeping container alive for debugging..."
-  sleep 600
+  echo "Error: Prisma migration failed!"
   exit $MIGRATE_STATUS
 fi
 
 echo "Starting NestJS application on port 3001..."
-node dist/main
-NEST_STATUS=$?
-echo "NestJS application exited with code: $NEST_STATUS. Keeping container alive for debugging..."
-sleep 600
-exit $NEST_STATUS
+exec node dist/src/main
