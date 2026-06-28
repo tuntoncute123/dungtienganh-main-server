@@ -23,6 +23,7 @@ model Lesson {
   duration   String
   thumbnail  String?
   playlistId String?
+  exerciseId String?
   createdAt  DateTime  @default(now())
   comments   Comment[]
 }

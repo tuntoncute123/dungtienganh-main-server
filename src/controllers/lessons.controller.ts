@@ -24,8 +24,8 @@ export class LessonsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async createLesson(@Body() body: { title: string; videoUrl?: string; duration: string; thumbnail?: string; playlistId?: string }) {
-    const { title, videoUrl, duration, thumbnail, playlistId } = body;
+  async createLesson(@Body() body: { title: string; videoUrl?: string; duration: string; thumbnail?: string; playlistId?: string; exerciseId?: string }) {
+    const { title, videoUrl, duration, thumbnail, playlistId, exerciseId } = body;
     if (!title || !duration) {
       throw new BadRequestException('Title and duration are required');
     }
@@ -36,19 +36,20 @@ export class LessonsController {
         duration,
         thumbnail: thumbnail || null,
         playlistId: playlistId || null,
+        exerciseId: exerciseId || null,
       },
     });
   }
 
   @Put()
-  async updateLesson(@Body() body: { id: string; title: string; videoUrl?: string; duration: string; thumbnail?: string; playlistId?: string }) {
-    const { id, title, videoUrl, duration, thumbnail, playlistId } = body;
+  async updateLesson(@Body() body: { id: string; title: string; videoUrl?: string; duration: string; thumbnail?: string; playlistId?: string; exerciseId?: string }) {
+    const { id, title, videoUrl, duration, thumbnail, playlistId, exerciseId } = body;
     if (!id) {
       throw new BadRequestException('ID is required');
     }
     return this.prisma.lesson.update({
       where: { id },
-      data: { title, videoUrl, duration, thumbnail, playlistId },
+      data: { title, videoUrl, duration, thumbnail, playlistId, exerciseId },
     });
   }
 
