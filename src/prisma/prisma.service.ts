@@ -16,6 +16,18 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
 
   async onModuleInit() {
     await this.$connect();
+    try {
+      await this.user.updateMany({
+        where: { username: 'admin', plainPassword: null },
+        data: { plainPassword: 'admin123' },
+      });
+      await this.user.updateMany({
+        where: { username: 'student', plainPassword: null },
+        data: { plainPassword: 'student123' },
+      });
+    } catch (e) {
+      console.error('Failed to run plainPassword data fix:', e);
+    }
   }
 
   async onModuleDestroy() {

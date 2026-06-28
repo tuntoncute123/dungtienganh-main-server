@@ -27,6 +27,7 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
       data: {
         username,
         password: hashedPassword,
+        plainPassword: password,
         name,
         role: 'student',
         allowedCourses: allowedCourses || [],
@@ -39,6 +40,7 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
         role: true,
         allowedCourses: true,
         allowedExams: true,
+        plainPassword: true,
         createdAt: true,
       },
     });

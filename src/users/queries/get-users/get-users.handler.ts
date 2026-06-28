@@ -19,6 +19,7 @@ export class GetUsersHandler implements IQueryHandler<GetUsersQuery> {
       role: user.role,
       allowedCourses: user.allowedCourses || [],
       allowedExams: user.allowedExams || [],
+      plainPassword: user.plainPassword || '',
       createdAt: user.createdAt,
     }));
   }

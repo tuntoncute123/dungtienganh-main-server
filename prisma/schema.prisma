@@ -91,6 +91,7 @@ model User {
   id             String   @id @default(uuid())
   username       String   @unique
   password       String
+  plainPassword  String?
   name           String
   role           String   @default("student") // "admin" | "student"
   allowedCourses Json?    // Danh sách khóa học được phép học (ví dụ: ["toan-9-he-2k12"])

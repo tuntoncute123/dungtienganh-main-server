@@ -9,12 +9,20 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute(command: UpdateUserCommand) {
-    const { id, name, password, allowedCourses, allowedExams } = command.dto;
+    const { id, username, name, password, allowedCourses, allowedExams } = command.dto;
 
     if (!id) throw new BadRequestException('User ID is required');
 
     const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) throw new NotFoundException('Học sinh không tồn tại');
+
+    // Check username conflict if it changes
+    if (username && username !== user.username) {
+      const existing = await this.prisma.user.findUnique({ where: { username } });
+      if (existing) {
+        throw new BadRequestException('Tên đăng nhập đã tồn tại trong hệ thống');
+      }
+    }
 
     let hashedPassword: string | undefined;
     if (password && password.trim() !== '') {
@@ -25,8 +33,10 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
     return this.prisma.user.update({
       where: { id },
       data: {
+        username: username !== undefined ? username : undefined,
         name,
         password: hashedPassword,
+        plainPassword: password !== undefined ? password : undefined,
         allowedCourses: allowedCourses !== undefined ? allowedCourses : undefined,
         allowedExams: allowedExams !== undefined ? allowedExams : undefined,
       },
@@ -37,6 +47,7 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
         role: true,
         allowedCourses: true,
         allowedExams: true,
+        plainPassword: true,
         createdAt: true,
       },
     });
