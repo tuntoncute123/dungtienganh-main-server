@@ -6,11 +6,6 @@ import * as bcrypt from 'bcryptjs';
 export class UsersController {
   constructor(private readonly prisma: PrismaService) {}
 
-  @Get('all-debug')
-  async getAllDebug() {
-    return this.prisma.user.findMany();
-  }
-
   @Get()
   async getStudents() {
     // Chỉ trả về các user có role là student để hiển thị quản lý học sinh
