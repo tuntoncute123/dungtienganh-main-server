@@ -8,11 +8,13 @@ generator client {
 
 // Story model
 model Story {
-  id        String   @id @default(uuid())
-  name      String
-  image     String
-  avatar    String?
-  createdAt DateTime @default(now())
+  id         String   @id @default(uuid())
+  name       String
+  image      String
+  avatar     String?
+  type       String   @default("upload")
+  isApproved Boolean  @default(false)
+  createdAt  DateTime @default(now())
 }
 
 // Lesson model
