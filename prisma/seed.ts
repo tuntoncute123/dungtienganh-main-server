@@ -3,6 +3,9 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import * as dotenv from "dotenv";
 import * as bcrypt from "bcryptjs";
+import * as fs from "fs";
+import * as path from "path";
+import Redis from "ioredis";
 
 dotenv.config();
 
@@ -11,6 +14,16 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
+  console.log("Clearing Redis cache...");
+  try {
+    const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379");
+    await redis.flushall();
+    await redis.quit();
+    console.log("Redis cache cleared!");
+  } catch (e) {
+    console.warn("Could not connect to Redis to clear cache:", e);
+  }
+
   console.log("Seeding database...");
 
   // 1. Seed Stories
@@ -70,6 +83,12 @@ async function main() {
   await prisma.lesson.deleteMany();
   await prisma.comment.deleteMany();
 
+  const QUIZ_POINTS = [
+    { label: "Quiz 1 41:26", percent: 74.4 },
+    { label: "Quiz 2 43:39", percent: 78.4 },
+    { label: "Quiz 3 49:43", percent: 89.3 },
+  ];
+
   const lesson1 = await prisma.lesson.create({
     data: {
       id: "1",
@@ -78,10 +97,31 @@ async function main() {
       thumbnail: "/assets/1766474256-video_0360702d.png",
       videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
       playlistId: "playlist-grammar",
+      documents: [
+        { name: "[ Cô Vũ Mai Phương ] Từ loại (Lý thuyết - Buổi 1)_ Danh từ.pdf", url: "#" }
+      ],
+      quizPoints: QUIZ_POINTS,
+      homeworkTasks: ["EZ Vocab"],
     },
   });
 
   const lesson2 = await prisma.lesson.create({
+    data: {
+      id: "2",
+      title: "Thi Online: Danh từ",
+      duration: "30:00",
+      thumbnail: "/assets/1766474256-livestrea_3449e942.png",
+      videoUrl: null,
+      playlistId: "playlist-grammar",
+      exerciseId: "progress-test-1",
+      documents: [
+        { name: "[ Cô Vũ Mai Phương ] Thi Online_Danh từ.pdf", url: "#" }
+      ],
+      homeworkTasks: ["Tập dịch thông minh"],
+    },
+  });
+
+  const lesson3 = await prisma.lesson.create({
     data: {
       id: "3",
       title: "Từ loại (Lý thuyết - Buổi 2)",
@@ -89,6 +129,75 @@ async function main() {
       thumbnail: "/assets/1766474256-livestrea_3449e942.png",
       videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
       playlistId: "playlist-grammar",
+      documents: [
+        { name: "[ Cô Vũ Mai Phương ] Từ loại (Lý thuyết - Buổi 2)_ Tính từ.pdf", url: "#" }
+      ],
+      quizPoints: QUIZ_POINTS,
+      homeworkTasks: ["EZ Vocab"],
+    },
+  });
+
+  const lesson4 = await prisma.lesson.create({
+    data: {
+      id: "4",
+      title: "Thi online: Tính từ",
+      duration: "30:00",
+      thumbnail: "/assets/1766474256-livestrea_3449e942.png",
+      videoUrl: null,
+      playlistId: "playlist-grammar",
+      exerciseId: "progress-test-2",
+      documents: [
+        { name: "[ Cô Vũ Mai Phương ] Thi Online_Tính từ.pdf", url: "#" }
+      ],
+      homeworkTasks: ["Tập dịch thông minh"],
+    },
+  });
+
+  const lesson5 = await prisma.lesson.create({
+    data: {
+      id: "5",
+      title: "Từ loại (Lý thuyết - Buổi 3)",
+      duration: "48:15",
+      thumbnail: "/assets/1766474256-video_0360702d.png",
+      videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
+      playlistId: "playlist-grammar",
+      documents: [
+        { name: "[ Cô Vũ Mai Phương ] Từ loại (Lý thuyết - Buổi 3)_ Trạng từ.pdf", url: "#" }
+      ],
+      quizPoints: QUIZ_POINTS,
+      homeworkTasks: ["EZ Vocab"],
+    },
+  });
+
+  const lesson6 = await prisma.lesson.create({
+    data: {
+      id: "6",
+      title: "Thi online: Trạng từ",
+      duration: "30:00",
+      thumbnail: "/assets/1766474256-livestrea_3449e942.png",
+      videoUrl: null,
+      playlistId: "playlist-grammar",
+      exerciseId: "progress-test-3",
+      documents: [
+        { name: "[ Cô Vũ Mai Phương ] Thi Online_Trạng từ.pdf", url: "#" }
+      ],
+      homeworkTasks: ["Tập dịch thông minh"],
+    },
+  });
+
+  const lesson7 = await prisma.lesson.create({
+    data: {
+      id: "7",
+      title: "Từ loại (Bài tập Ứng dụng - Buổi 1)",
+      duration: "50:00",
+      thumbnail: "/assets/1766474256-video_0360702d.png",
+      videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
+      playlistId: "playlist-grammar",
+      documents: [
+        { name: "[ Cô Vũ Mai Phương ] Từ loại (Bài tập Ứng dụng - Buổi 1).pdf", url: "#" }
+      ],
+      quizPoints: QUIZ_POINTS,
+      homeworkTasks: ["EZ Vocab"],
     },
   });
 
@@ -108,7 +217,7 @@ async function main() {
     {
       userName: "Minh Hà",
       content: "ở 31:34 thì collection đổi thành complex được không ạ",
-      lessonId: lesson2.id,
+      lessonId: lesson3.id,
     },
   ];
 
@@ -199,31 +308,107 @@ async function main() {
   const exam2 = await prisma.exam.create({
     data: {
       id: "progress-test-1",
-      title: "Đề thi khảo sát chất lượng tháng 6 - TOEIC Part 5 & 6",
+      title: "Thi Online: Danh từ",
       category: "progress-test",
-      duration: 45,
+      duration: 30,
+      cardCount: 25,
+    },
+  });
+
+  const exam3 = await prisma.exam.create({
+    data: {
+      id: "progress-test-2",
+      title: "Thi online: Tính từ",
+      category: "progress-test",
+      duration: 30,
       cardCount: 2,
     },
   });
 
+  const exam4 = await prisma.exam.create({
+    data: {
+      id: "progress-test-3",
+      title: "Thi online: Trạng từ",
+      category: "progress-test",
+      duration: 30,
+      cardCount: 2,
+    },
+  });
+
+  const exam5 = await prisma.exam.create({
+    data: {
+      id: "reading-progress-test",
+      title: "Reading Progress Test (Tổng hợp)",
+      category: "progress-test",
+      duration: 60,
+      cardCount: 51,
+    },
+  });
+
   const questions = [
+    // Questions for progress-test-2
     {
-      examId: exam2.id,
+      examId: "progress-test-2",
       number: 1,
-      text: "The free clinic was founded by a group of doctors to give _____ for various medical conditions.",
-      options: { A: "treatment", B: "treat", C: "treated", D: "treating" },
+      text: "The new software is designed to be highly _____.",
+      options: { A: "efficient", B: "efficiency", C: "efficiently", D: "effice" },
       correctAnswer: "A",
-      explanation: "Chọn danh từ 'treatment' (sự điều trị) làm tân ngữ cho động từ 'give'. Các phương án còn lại là động từ.",
+      explanation: "Chọn tính từ 'efficient' sau động từ liên kết 'be'.",
     },
     {
-      examId: exam2.id,
+      examId: "progress-test-2",
       number: 2,
-      text: "The artist sent _____ best pieces to the gallery to be reviewed by the owner.",
-      options: { A: "him", B: "himself", C: "his", D: "he" },
-      correctAnswer: "C",
-      explanation: "Chọn tính từ sở hữu 'his' để bổ nghĩa cho cụm danh từ 'best pieces'.",
+      text: "She was _____ when she heard the good news.",
+      options: { A: "excited", B: "excite", C: "exciting", D: "excitingly" },
+      correctAnswer: "A",
+      explanation: "Chọn tính từ đuôi -ed 'excited' để miêu tả cảm xúc của con người.",
+    },
+    // Questions for progress-test-3
+    {
+      examId: "progress-test-3",
+      number: 1,
+      text: "The manager reviewed the contract _____ before signing it.",
+      options: { A: "carefully", B: "careful", C: "carefulness", D: "caring" },
+      correctAnswer: "A",
+      explanation: "Chọn trạng từ 'carefully' bổ nghĩa cho động từ 'reviewed'.",
+    },
+    {
+      examId: "progress-test-3",
+      number: 2,
+      text: "The system runs _____ during off-peak hours.",
+      options: { A: "smoothly", B: "smooth", C: "smoothness", D: "smoothed" },
+      correctAnswer: "A",
+      explanation: "Chọn trạng từ 'smoothly' bổ nghĩa cho động từ 'runs'.",
     },
   ];
+
+  // Generate 25 questions for Nouns (progress-test-1)
+  for (let i = 1; i <= 25; i++) {
+    questions.push({
+      examId: "progress-test-1",
+      number: i,
+      text: `The free clinic was founded by a group of doctors to give _____ for various medical conditions (Noun Question ${i}).`,
+      options: { A: "treatment", B: "treat", C: "treated", D: "treating" },
+      correctAnswer: "A",
+      explanation: `Chọn danh từ 'treatment' (sự điều trị) làm tân ngữ cho động từ 'give' ở câu hỏi số ${i}.`,
+    });
+  }
+
+  // Load and add default questions for reading-progress-test
+  const questionsJsonPath = path.join(__dirname, "questions.json");
+  if (fs.existsSync(questionsJsonPath)) {
+    const defaultQuestions = JSON.parse(fs.readFileSync(questionsJsonPath, "utf8"));
+    for (const q of defaultQuestions) {
+      questions.push({
+        examId: "reading-progress-test",
+        number: q.number,
+        text: q.text,
+        options: q.options || undefined,
+        correctAnswer: q.correctAnswer,
+        explanation: q.explanation || undefined,
+      });
+    }
+  }
 
   for (const q of questions) {
     await prisma.question.create({
@@ -231,9 +416,9 @@ async function main() {
         examId: q.examId,
         number: q.number,
         text: q.text,
-        options: q.options,
+        options: q.options || undefined,
         correctAnswer: q.correctAnswer,
-        explanation: q.explanation,
+        explanation: q.explanation || undefined,
       },
     });
   }

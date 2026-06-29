@@ -19,15 +19,18 @@ model Story {
 
 // Lesson model
 model Lesson {
-  id         String    @id @default(uuid())
-  title      String
-  videoUrl   String?
-  duration   String
-  thumbnail  String?
-  playlistId String?
-  exerciseId String?
-  createdAt  DateTime  @default(now())
-  comments   Comment[]
+  id            String    @id @default(uuid())
+  title         String
+  videoUrl      String?
+  duration      String
+  thumbnail     String?
+  playlistId    String?
+  exerciseId    String?
+  documents     Json?
+  quizPoints    Json?
+  homeworkTasks Json?
+  createdAt     DateTime  @default(now())
+  comments      Comment[]
 }
 
 // Comment model

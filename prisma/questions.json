@@ -1,0 +1,554 @@
+[
+  {
+    "number": 1,
+    "text": "The free clinic was founded by a group of doctors to give _____ for various medical conditions.",
+    "options": {
+      "A": "treatment",
+      "B": "treat",
+      "C": "treated",
+      "D": "treating"
+    },
+    "correctAnswer": "A",
+    "explanation": "Xác định dạng câu hỏi: Ta thấy các đáp án là các dạng từ khác nhau của gốc từ 'treat' ⇒ Câu hỏi về Từ loại.\nSử dụng mẹo ngữ pháp: Trước chỗ trống là động từ 'give' và phía sau không có thêm dấu hiệu nhận biết gì ⇒ Chỗ trống cần điền danh từ/V-ing làm tân ngữ.\n\n*Lưu ý:* Mở rộng: Cụm từ cố định 'give treatment' mang nghĩa là cung cấp sự điều trị hay điều trị cho ai đó.\n\n*Dịch câu:* Phòng khám miễn phí được thành lập bởi một nhóm bác sĩ để cung cấp _____ cho các tình trạng y tế khác nhau."
+  },
+  {
+    "number": 2,
+    "text": "The artist sent _____ best pieces to the gallery to be reviewed by the owner.",
+    "options": {
+      "A": "him",
+      "B": "himself",
+      "C": "his",
+      "D": "he"
+    },
+    "correctAnswer": "C",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các đại từ và tính từ sở hữu khác nhau của gốc 'he' ⇒ Câu hỏi về Đại từ.\nSử dụng mẹo ngữ pháp: Đứng sau chỗ trống là cụm danh từ 'best pieces' ⇒ Chỗ trống cần điền tính từ sở hữu bổ nghĩa cho danh từ.\n\n*Dịch câu:* Người nghệ sĩ đã gửi những tác phẩm tốt nhất của _____ đến phòng trưng bày để được người chủ xem xét."
+  },
+  {
+    "number": 3,
+    "text": "The figures that accompany the financial statement should be _____ to the spending category.",
+    "options": {
+      "A": "relevance",
+      "B": "relevantly",
+      "C": "more relevantly",
+      "D": "relevant"
+    },
+    "correctAnswer": "D",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ khác nhau của gốc 'relevance' ⇒ Câu hỏi về Từ loại.\nSử dụng mẹo ngữ pháp: Đứng trước chỗ trống là động từ liên kết 'be' ⇒ Cần một tính từ (Adjective) để đóng vai trò làm vị ngữ.\n\n*Dịch câu:* Các số liệu đi kèm với báo cáo tài chính phải _____ với danh mục chi tiêu."
+  },
+  {
+    "number": 4,
+    "text": "The majority of occupants _____ live in Regal Towers are upset about the ongoing problems with their air conditioning systems.",
+    "options": {
+      "A": "what",
+      "B": "where",
+      "C": "they",
+      "D": "who"
+    },
+    "correctAnswer": "D",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các từ quan hệ và đại từ nhân xưng ⇒ Câu hỏi về Mệnh đề quan hệ.\nSử dụng mẹo ngữ pháp: Danh từ đứng trước là 'occupants' (người cư ngụ - chỉ người), phía sau chỗ trống là động từ 'live' ⇒ Cần một đại từ quan hệ thay thế cho danh từ chỉ người và làm chủ ngữ.\n\n*Dịch câu:* Phần lớn những người cư ngụ _____ sống ở Regal Towers đang rất khó chịu về những vấn đề đang diễn ra với hệ thống điều hòa của họ."
+  },
+  {
+    "number": 5,
+    "text": "During the peak season, it is _____ to hire additional workers for the weekend shifts.",
+    "options": {
+      "A": "necessitate",
+      "B": "necessarily",
+      "C": "necessary",
+      "D": "necessity"
+    },
+    "correctAnswer": "C",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ của gốc 'necessity' ⇒ Câu hỏi về Từ loại.\nSử dụng mẹo ngữ pháp: Cấu trúc giả định / cấu trúc tính từ: 'It is + Adj + to-V' (Thật là... khi làm gì đó) ⇒ Chỗ trống cần điền một tính từ.\n\n*Dịch câu:* Trong mùa cao điểm, việc thuê thêm nhân công cho các ca làm việc cuối tuần là _____."
+  },
+  {
+    "number": 6,
+    "text": "The company _____ lowered its prices to outsell its competitors and attract more customers.",
+    "options": {
+      "A": "strategy",
+      "B": "strategically",
+      "C": "strategies",
+      "D": "strategic"
+    },
+    "correctAnswer": "B",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ của gốc 'strategy' ⇒ Câu hỏi về Từ loại.\nSử dụng mẹo ngữ pháp: Chỗ trống đứng giữa chủ ngữ 'The company' và động từ chính 'lowered' ⇒ Chỗ trống cần điền một trạng từ (Adverb) để bổ nghĩa cho động từ.\n\n*Dịch câu:* Công ty đã giảm giá bán một cách _____ để bán chạy hơn các đối thủ cạnh tranh và thu hút nhiều khách hàng hơn."
+  },
+  {
+    "number": 7,
+    "text": "For optimal safety on the road, avoid _____ the view of the rear window and side-view mirrors.",
+    "options": {
+      "A": "obstructs",
+      "B": "obstructed",
+      "C": "obstruction",
+      "D": "obstructing"
+    },
+    "correctAnswer": "D",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng biến đổi của động từ 'obstruct' ⇒ Câu hỏi về Danh động từ / Từ loại.\nSử dụng mẹo ngữ pháp: Đứng trước chỗ trống là động từ 'avoid' (tránh) ⇒ Theo quy tắc ngữ pháp, sau 'avoid' cần một danh động từ dạng V-ing (avoid + V-ing).\n\n*Dịch câu:* Để đảm bảo an toàn tối ưu trên đường, hãy tránh _____ tầm nhìn của kính chắn gió phía sau và gương chiếu hậu hai bên."
+  },
+  {
+    "number": 8,
+    "text": "The sprinklers for the lawn’s irrigation system are _____ controlled.",
+    "options": {
+      "A": "mechanically",
+      "B": "mechanic",
+      "C": "mechanism",
+      "D": "mechanical"
+    },
+    "correctAnswer": "A",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ của gốc 'mechanic' ⇒ Câu hỏi về Từ loại.\nSử dụng mẹo ngữ pháp: Đứng trước chỗ trống là động từ tobe 'are' và đứng sau là phân từ hai 'controlled' ⇒ Chỗ trống cần điền một trạng từ (Adverb) bổ nghĩa cho tính từ/phân từ trong câu bị động.\n\n*Dịch câu:* Các vòi phun nước cho hệ thống tưới cỏ được điều khiển bằng _____."
+  },
+  {
+    "number": 9,
+    "text": "The governmental department used to provide financial aid, but now it offers _____ services only.",
+    "options": {
+      "A": "legal",
+      "B": "legalize",
+      "C": "legally",
+      "D": "legalizes"
+    },
+    "correctAnswer": "A",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ của gốc 'legal' ⇒ Câu hỏi về Từ loại.\nSử dụng mẹo ngữ pháp: Đứng sau chỗ trống là danh từ 'services' ⇒ Chỗ trống cần điền một tính từ (Adjective) để bổ nghĩa cho danh từ đó.\n\n*Dịch câu:* Bộ phận chính phủ từng cung cấp hỗ trợ tài chính, nhưng hiện tại nó chỉ cung cấp các dịch vụ _____."
+  },
+  {
+    "number": 10,
+    "text": "Mr. Ross, _____ is repainting the interior of the lobby, was recommended by a friend of the building manager.",
+    "options": {
+      "A": "himself",
+      "B": "he",
+      "C": "who",
+      "D": "which"
+    },
+    "correctAnswer": "C",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các đại từ và từ quan hệ khác nhau ⇒ Mệnh đề quan hệ.\nSử dụng mẹo ngữ pháp: Chủ ngữ là 'Mr. Ross' (danh từ chỉ người) và động từ phía sau là 'is repainting' ⇒ Cần đại từ quan hệ thay thế cho chủ ngữ chỉ người.\n\n*Dịch câu:* Ông Ross, _____ đang sơn lại nội thất của sảnh đợi, đã được giới thiệu bởi một người bạn của người quản lý tòa nhà."
+  },
+  {
+    "number": 11,
+    "text": "The upscale boutique Jane's Closet is known for selling the most stylish _____ for young professionals.",
+    "options": {
+      "A": "accessorized",
+      "B": "accessorize",
+      "C": "accessorizes",
+      "D": "accessories"
+    },
+    "correctAnswer": "D",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ của gốc 'accessorize' ⇒ Câu hỏi về Từ loại.\nSử dụng mẹo ngữ pháp: Đứng trước chỗ trống là cụm từ chỉ mức độ so sánh cực đại 'the most stylish' (tính từ) ⇒ Chỗ trống cần điền một danh từ làm tân ngữ chính cho cụm danh từ.\n\n*Dịch câu:* Cửa hàng thời trang cao cấp Jane's Closet nổi tiếng với việc bán những _____ sành điệu nhất dành cho các chuyên gia trẻ tuổi."
+  },
+  {
+    "number": 12,
+    "text": "The April edition of Fishing and More magazine looks _____ different from previous issues because of the new art editor.",
+    "options": {
+      "A": "completed",
+      "B": "complete",
+      "C": "completely",
+      "D": "completing"
+    },
+    "correctAnswer": "C",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ của gốc 'complete' ⇒ Câu hỏi về Từ loại.\nSử dụng mẹo ngữ pháp: Đứng sau chỗ trống là tính từ 'different' ⇒ Chỗ trống cần điền một trạng từ (Adverb) để bổ nghĩa cho tính từ.\n\n*Dịch câu:* Ấn bản tháng Tư của tạp chí Fishing and More trông _____ khác biệt so với các số trước đây do có biên tập viên nghệ thuật mới."
+  },
+  {
+    "number": 13,
+    "text": "Due to the high volume of foot traffic, the shop must polish its floors more _____ than usual during the peak season.",
+    "options": {
+      "A": "frequent",
+      "B": "frequented",
+      "C": "frequency",
+      "D": "frequently"
+    },
+    "correctAnswer": "D",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ của gốc 'frequent' ⇒ Câu hỏi về Từ loại.\nSử dụng mẹo ngữ pháp: Chỗ trống đứng sau từ chỉ mức độ 'more' trong cấu trúc so sánh hơn, bổ nghĩa cho hành động 'polish' (động từ thường) ⇒ Cần điền trạng từ (Adverb).\n\n*Dịch câu:* Do lượng người qua lại lớn, cửa hàng phải đánh bóng sàn nhà _____ hơn bình thường trong mùa cao điểm."
+  },
+  {
+    "number": 14,
+    "text": "Ms. Stevenson contacted the real estate agent _____ name and phone number appeared on the advertisement.",
+    "options": {
+      "A": "what",
+      "B": "which",
+      "C": "whose",
+      "D": "who"
+    },
+    "correctAnswer": "C",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các từ quan hệ khác nhau ⇒ Đại từ quan hệ.\nSử dụng mẹo ngữ pháp: Sau chỗ trống là cụm danh từ sở hữu 'name and phone number' và phía trước là 'real estate agent' (người) ⇒ Cần đại từ quan hệ sở hữu chỉ sự thuộc về.\n\n*Dịch câu:* Cô Stevenson đã liên hệ với nhân viên môi giới bất động sản _____ tên và số điện thoại xuất hiện trên quảng cáo."
+  },
+  {
+    "number": 15,
+    "text": "Thanks to his experience, Mr. Warren is _____ capable of completing the job on his own.",
+    "options": {
+      "A": "certainly",
+      "B": "certain",
+      "C": "certainty",
+      "D": "certify"
+    },
+    "correctAnswer": "A",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ của gốc 'certain' ⇒ Câu hỏi về Từ loại.\nSử dụng mẹo ngữ pháp: Chỗ trống đứng trước tính từ 'capable' và đứng sau động từ liên kết 'is' ⇒ Cần điền một trạng từ (Adverb) để bổ nghĩa cho tính từ.\n\n*Dịch câu:* Nhờ kinh nghiệm của mình, ông Warren _____ có khả năng tự mình hoàn thành công việc."
+  },
+  {
+    "number": 16,
+    "text": "The notice indicated that a first-aid training course will be provided free of charge to _____ next month.",
+    "options": {
+      "A": "residents",
+      "B": "residence",
+      "C": "residential",
+      "D": "resides"
+    },
+    "correctAnswer": "A",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ của gốc 'reside' ⇒ Câu hỏi về Từ loại.\nSử dụng mẹo ngữ pháp: Đứng sau giới từ 'to' và cụm trạng từ chỉ tính chất 'free of charge' ⇒ Chỗ trống cần danh từ chỉ đối tượng nhận khóa học (danh từ chỉ người số nhiều).\n\n*Dịch câu:* Thông báo cho biết một khóa đào tạo sơ cứu sẽ được cung cấp miễn phí cho _____ vào tháng tới."
+  },
+  {
+    "number": 17,
+    "text": "The chef _____ prepares the entrée for a restaurant critic often comes out to greet him or her in person.",
+    "options": {
+      "A": "whose",
+      "B": "what",
+      "C": "either",
+      "D": "who"
+    },
+    "correctAnswer": "D",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các đại từ quan hệ và từ nối ⇒ Mệnh đề quan hệ.\nSử dụng mẹo ngữ pháp: Chỗ trống đứng sau danh từ chỉ người 'The chef' và đứng trước động từ 'prepares' ⇒ Cần một đại từ quan hệ thay thế làm chủ ngữ chỉ người.\n\n*Dịch câu:* Người đầu bếp _____ chuẩn bị món khai vị cho một nhà phê bình nhà hàng thường ra mặt để đích thân chào hỏi vị khách đó."
+  },
+  {
+    "number": 18,
+    "text": "As long as there are no further delays, the factory will be fully _____ by June 18",
+    "options": {
+      "A": "operational",
+      "B": "operate",
+      "C": "operates",
+      "D": "operation"
+    },
+    "correctAnswer": "A",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ của gốc 'operate' ⇒ Câu hỏi về Từ loại.\nSử dụng mẹo ngữ pháp: Đứng sau động từ liên kết 'be' (will be) và trạng từ 'fully' ⇒ Cần điền một tính từ (Adjective) chỉ trạng thái hoạt động.\n\n*Dịch câu:* Miễn là không có sự chậm trễ nào thêm nữa, nhà máy sẽ đi vào hoạt động _____ hoàn toàn trước ngày 18 tháng 6."
+  },
+  {
+    "number": 19,
+    "text": "The restaurant has a _____ decorated room that is perfect for hosting children's parties.",
+    "options": {
+      "A": "cheerful",
+      "B": "cheerfully",
+      "C": "cheerfulness",
+      "D": "cheer"
+    },
+    "correctAnswer": "B",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ của gốc 'cheerful' ⇒ Câu hỏi về Từ loại.\nSử dụng mẹo ngữ pháp: Chỗ trống đứng trước phân từ hai đóng vai trò tính từ 'decorated' bổ nghĩa cho danh từ 'room' ⇒ Cần một trạng từ (Adverb) đứng trước để bổ nghĩa cho tính từ đó.\n\n*Dịch câu:* Nhà hàng có một căn phòng được trang trí _____ hoàn hảo cho việc tổ chức các bữa tiệc trẻ em."
+  },
+  {
+    "number": 20,
+    "text": "Despite having some problems with the sound system during the performance, the concert was an _____ experience for everyone.",
+    "options": {
+      "A": "enjoyable",
+      "B": "enjoyment",
+      "C": "enjoys",
+      "D": "enjoyably"
+    },
+    "correctAnswer": "A",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ của gốc 'enjoy' ⇒ Câu hỏi về Từ loại.\nSử dụng mẹo ngữ pháp: Chỗ trống đứng trước danh từ 'experience' và đứng sau mạo từ 'an' ⇒ Cần điền một tính từ (Adjective) bổ nghĩa cho danh từ.\n\n*Dịch câu:* Mặc dù gặp một số sự cố với hệ thống âm thanh trong suốt buổi biểu diễn, buổi hòa nhạc vẫn là một trải nghiệm _____ đối với mọi người."
+  },
+  {
+    "number": 21,
+    "text": "Please submit your expense reports _____ the end of the month.",
+    "options": null,
+    "correctAnswer": "by|before",
+    "explanation": "Xác định nghĩa và ngữ cảnh: Cần một giới từ đi với mốc thời gian 'the end of the month' để biểu đạt nghĩa hạn chót trước cuối tháng.\nMẹo từ vựng: Giới từ 'by' thường dùng để chỉ một hành động phải hoàn thành trước hoặc muộn nhất vào một thời điểm nào đó. Ngoài ra 'before' (trước) cũng phù hợp ngữ pháp.\n\n*Dịch câu:* Vui lòng nộp báo cáo chi phí của bạn trước cuối tháng."
+  },
+  {
+    "number": 22,
+    "text": "The committee will _____ the proposal tomorrow morning.",
+    "options": null,
+    "correctAnswer": "review|discuss|evaluate|consider|approve",
+    "explanation": "Xác định nghĩa và ngữ cảnh: Đứng sau trợ động từ khuyết thiếu 'will' là một động từ nguyên mẫu (V-bare) làm vị ngữ chính cho chủ ngữ 'The committee' tác động lên tân ngữ 'the proposal'.\nChọn từ thích hợp: Các từ phù hợp nghĩa như 'review' (xem xét/đánh giá), 'discuss' (thảo luận), 'consider' (cân nhắc), 'evaluate' (định giá) hoặc 'approve' (phê duyệt).\n\n*Dịch câu:* Ủy ban sẽ xem xét / thảo luận về đề xuất này vào sáng mai."
+  },
+  {
+    "number": 23,
+    "text": "All visitors must _____ at the front desk upon arrival.",
+    "options": null,
+    "correctAnswer": "register|sign in|report",
+    "explanation": "Xác định nghĩa và ngữ cảnh: Cần động từ nguyên mẫu đứng sau động từ khuyết thiếu 'must' kết hợp giới từ 'at' để chỉ hành động của hành khách/khách khi đến một địa điểm.\nCụm từ thông dụng: Cụm 'register at the front desk' (đăng ký tại quầy lễ tân) hoặc 'sign in' (ký tên đăng nhập) là các cụm từ phổ biến trong môi trường văn phòng chuyên nghiệp.\n\n*Dịch câu:* Tất cả khách viếng thăm phải đăng ký / ký tên tại quầy lễ tân khi đến nơi."
+  },
+  {
+    "number": 24,
+    "text": "The marketing department is planning a new _____ for the product.",
+    "options": null,
+    "correctAnswer": "campaign|strategy|launch|plan",
+    "explanation": "Xác định nghĩa và ngữ cảnh: Chỗ trống đứng sau tính từ 'new' và trước giới từ 'for' ⇒ Cần một danh từ số ít làm tân ngữ cho động từ 'planning'.\nChọn từ thích hợp: 'campaign' (chiến dịch tiếp thị), 'strategy' (chiến lược) hoặc 'plan' (kế hoạch) rất phù hợp với phòng tiếp thị (marketing department).\n\n*Dịch câu:* Phòng tiếp thị đang lập kế hoạch cho một chiến dịch / chiến lược mới cho sản phẩm."
+  },
+  {
+    "number": 25,
+    "text": "We are pleased to announce the _____ of our new branch office.",
+    "options": null,
+    "correctAnswer": "opening|launch|expansion|establishment",
+    "explanation": "Xác định nghĩa và ngữ cảnh: Chỗ trống đứng sau mạo từ 'the' và trước giới từ 'of' ⇒ Cần một danh từ làm trung tâm của cụm danh từ.\nMẹo từ vựng: Với văn phòng chi nhánh mới ('new branch office'), các danh từ phù hợp là 'opening' (sự khai trương), 'launch' (sự ra mắt) hoặc 'expansion' (sự mở rộng).\n\n*Dịch câu:* Chúng tôi vui mừng thông báo về sự khai trương / mở rộng của văn phòng chi nhánh mới của chúng tôi."
+  },
+  {
+    "number": 26,
+    "text": "Please confirm your _____ by replying to this email.",
+    "options": null,
+    "correctAnswer": "attendance|registration|reservation|participation|booking",
+    "explanation": "Xác định nghĩa và ngữ cảnh: Đứng sau tính từ sở hữu 'your' cần một danh từ để làm tân ngữ cho động từ hành động 'confirm'.\nChọn từ thích hợp: Người gửi yêu cầu phản hồi email để xác nhận. Do đó danh từ thích hợp nhất là 'attendance' (sự tham gia), 'registration' (sự đăng ký) hoặc 'reservation' (sự đặt chỗ).\n\n*Dịch câu:* Vui lòng xác nhận sự tham dự / đăng ký của bạn bằng cách phản hồi email này."
+  },
+  {
+    "number": 27,
+    "text": "The new software is designed to _____ productivity.",
+    "options": null,
+    "correctAnswer": "increase|improve|boost|enhance|raise",
+    "explanation": "Xác định nghĩa và ngữ cảnh: Chỗ trống đứng sau từ chỉ mục đích 'to' ⇒ Cần một động từ nguyên thể (V-bare) tác động lên tân ngữ 'productivity' (năng suất).\nChọn từ thích hợp: Phần mềm mới được thiết kế để làm tăng năng suất ⇒ các động từ thích hợp như 'increase' (tăng), 'improve' (cải thiện), 'boost' (đẩy mạnh) hoặc 'enhance' (nâng cao).\n\n*Dịch câu:* Phần mềm mới được thiết kế để tăng cường / cải thiện năng suất lao động."
+  },
+  {
+    "number": 28,
+    "text": "We apologize for any _____ this delay may cause.",
+    "options": null,
+    "correctAnswer": "inconvenience|trouble|difficulty|disruption",
+    "explanation": "Xác định nghĩa và ngữ cảnh: Chỗ trống đứng sau tính từ 'any' và trước mệnh đề quan hệ rút gọn 'this delay may cause' ⇒ Cần một danh từ làm tân ngữ của giới từ 'for'.\nMẹo ngữ pháp & cụm từ: Cụm từ xin lỗi phổ biến trong tiếng Anh thương mại: 'apologize for any inconvenience' (xin lỗi vì bất kỳ sự bất tiện nào).\n\n*Dịch câu:* Chúng tôi xin lỗi vì bất kỳ sự bất tiện nào mà sự chậm trễ này có thể gây ra."
+  },
+  {
+    "number": 29,
+    "text": "Employees are encouraged to share their _____ during the meeting.",
+    "options": null,
+    "correctAnswer": "feedback|ideas|opinions|thoughts|suggestions",
+    "explanation": "Xác định nghĩa và ngữ cảnh: Đứng sau tính từ sở hữu 'their' cần một danh từ số nhiều hoặc danh từ không đếm được làm tân ngữ cho động từ 'share'.\nChọn từ thích hợp: Trong cuộc họp, nhân viên được khuyến khích chia sẻ các ý kiến, phản hồi ⇒ chọn 'feedback' (ý kiến phản hồi), 'ideas' (ý tưởng) hoặc 'opinions' (quan điểm).\n\n*Dịch câu:* Nhân viên được khuyến khích chia sẻ phản hồi / ý kiến đóng góp của họ trong suốt cuộc họp."
+  },
+  {
+    "number": 30,
+    "text": "The contract must be signed by both _____ to be valid.",
+    "options": null,
+    "correctAnswer": "parties|sides|signatories",
+    "explanation": "Xác định nghĩa và ngữ cảnh: Chỗ trống đứng sau từ chỉ số lượng/xác định 'both' (cả hai) ⇒ Cần điền một danh từ số nhiều.\nCụm từ thông dụng: Hợp đồng phải được ký bởi cả hai bên tham gia ⇒ danh từ phù hợp nhất là 'parties' (các bên ký kết) hoặc 'sides' (các bên).\n\n*Dịch câu:* Hợp đồng phải được ký bởi cả hai bên để có hiệu lực pháp lý."
+  },
+  {
+    "number": 31,
+    "text": "Mr. Smith is _____ for managing the sales team.",
+    "options": null,
+    "correctAnswer": "responsible|accountable|eligible",
+    "explanation": "Xác định nghĩa và ngữ cảnh: Chỗ trống đứng sau động từ liên kết 'is' và trước giới từ 'for' ⇒ Cần một tính từ (Adjective) biểu thị bổ nhiệm.\nCấu trúc từ vựng: Cấu trúc tính từ đi kèm giới từ phổ biến 'be responsible for something' (chịu trách nhiệm cho cái gì).\n\n*Dịch câu:* Ông Smith chịu trách nhiệm quản lý đội ngũ bán hàng."
+  },
+  {
+    "number": 32,
+    "text": "We look forward to _____ you in the near future.",
+    "options": null,
+    "correctAnswer": "seeing|meeting|serving|welcoming|helping|working with",
+    "explanation": "Xác định nghĩa và ngữ cảnh: Đứng sau cụm động từ 'look forward to' (mong đợi) bắt buộc phải là một danh động từ hoặc danh từ (look forward to + V-ing).\nChọn từ thích hợp: Trong giao dịch khách hàng, cụm từ mong gặp lại là 'look forward to seeing you' hoặc phục vụ quý khách là 'look forward to serving you'.\n\n*Dịch câu:* Chúng tôi rất mong được gặp lại / phục vụ bạn trong tương lai gần."
+  },
+  {
+    "number": 33,
+    "text": "The manager praised the team for _____ completing the project on time.",
+    "options": {
+      "A": "successful",
+      "B": "successfully",
+      "C": "success",
+      "D": "succeed"
+    },
+    "correctAnswer": "B",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng biến đổi của gốc 'success' ⇒ Câu hỏi về Từ loại.\nSử dụng mẹo ngữ pháp: Chỗ trống đứng trước danh động từ 'completing' (V-ing) ⇒ Cần điền một trạng từ (Adverb) để bổ nghĩa cho động từ đó.\n\n*Dịch câu:* Người quản lý đã khen ngợi cả đội vì đã hoàn thành _____ dự án đúng hạn."
+  },
+  {
+    "number": 34,
+    "text": "Ms. Davis will present her research _____ the international conference.",
+    "options": {
+      "A": "at",
+      "B": "on",
+      "C": "of",
+      "D": "for"
+    },
+    "correctAnswer": "A",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các giới từ chỉ nơi chốn/mối quan hệ ⇒ Giới từ.\nMẹo từ vựng: Để biểu đạt việc tham gia và trình bày nghiên cứu tại một hội nghị cụ thể 'the international conference' ⇒ Ta dùng giới từ 'at'.\n\n*Dịch câu:* Cô Davis sẽ trình bày nghiên cứu của mình _____ hội nghị quốc tế."
+  },
+  {
+    "number": 35,
+    "text": "The company plans to _____ its operations into European markets.",
+    "options": {
+      "A": "expand",
+      "B": "expansion",
+      "C": "expansive",
+      "D": "expanded"
+    },
+    "correctAnswer": "A",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ của gốc 'expand' ⇒ Câu hỏi về Từ loại.\nSử dụng mẹo ngữ pháp: Cấu trúc động từ sau động từ chính: 'plan + to-V' (lên kế hoạch làm gì) ⇒ Sau 'to' cần một động từ nguyên thể (V-bare).\n\n*Dịch câu:* Công ty có kế hoạch _____ hoạt động kinh doanh sang thị trường châu Âu."
+  },
+  {
+    "number": 36,
+    "text": "All employees are required to attend the safety training _____.",
+    "options": {
+      "A": "seminar",
+      "B": "seminate",
+      "C": "seminally",
+      "D": "seminars"
+    },
+    "correctAnswer": "A",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các từ có chung gốc từ 'seminar' hoặc cách viết khác ⇒ Từ loại / Danh từ ghép.\nSử dụng mẹo ngữ pháp: Chỗ trống đứng sau cụm danh từ 'the safety training' ⇒ Cần điền một danh từ tạo thành cụm danh từ ghép hoàn chỉnh: 'safety training seminar' (hội thảo huấn luyện an toàn).\n\n*Dịch câu:* Tất cả nhân viên được yêu cầu tham dự _____ đào tạo về an toàn."
+  },
+  {
+    "number": 37,
+    "text": "The new policy will become _____ starting next Monday.",
+    "options": {
+      "A": "effect",
+      "B": "effective",
+      "C": "effectively",
+      "D": "effectiveness"
+    },
+    "correctAnswer": "B",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ của gốc 'effect' ⇒ Câu hỏi về Từ loại.\nSử dụng mẹo ngữ pháp: Đứng sau động từ liên kết 'become' (trở nên) ⇒ Cần điền một tính từ (Adjective) để làm thành phần bổ ngữ chỉ tính chất/trạng thái.\n\n*Dịch câu:* Chính sách mới sẽ có _____ bắt đầu từ thứ Hai tới."
+  },
+  {
+    "number": 38,
+    "text": "Please double-check the figures before _____ the report.",
+    "options": {
+      "A": "submit",
+      "B": "submitted",
+      "C": "submitting",
+      "D": "submission"
+    },
+    "correctAnswer": "C",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng biến đổi của động từ 'submit' ⇒ Câu hỏi về Từ loại / Danh động từ.\nSử dụng mẹo ngữ pháp: Chỗ trống đứng sau giới từ 'before' (trước khi) ⇒ Cần điền một danh động từ dạng V-ing đóng vai trò tân ngữ cho giới từ.\n\n*Dịch câu:* Vui lòng kiểm tra lại các số liệu trước khi _____ báo cáo."
+  },
+  {
+    "number": 39,
+    "text": "The customer service team is committed to resolving issues _____.",
+    "options": {
+      "A": "prompt",
+      "B": "promptly",
+      "C": "promptness",
+      "D": "prompter"
+    },
+    "correctAnswer": "B",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ của gốc 'prompt' ⇒ Câu hỏi về Từ loại.\nSử dụng mẹo ngữ pháp: Đứng sau cụm động từ và tân ngữ 'resolving issues' ⇒ Cần điền một trạng từ (Adverb) bổ nghĩa cho hành động/động từ 'resolving'.\n\n*Dịch câu:* Nhóm dịch vụ khách hàng cam kết giải quyết các vấn đề một cách _____."
+  },
+  {
+    "number": 40,
+    "text": "Due to bad weather, the outdoor concert has been _____.",
+    "options": {
+      "A": "cancel",
+      "B": "canceled",
+      "C": "cancelling",
+      "D": "cancellation"
+    },
+    "correctAnswer": "B",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng biến đổi của động từ 'cancel' ⇒ Câu hỏi về Thì / Câu bị động.\nSử dụng mẹo ngữ pháp: Chủ ngữ 'the outdoor concert' (chỉ vật) không tự thực hiện hành động. Câu ở thể bị động hiện tại hoàn thành: 'has been + V-ed/P2' ⇒ Cần phân từ hai.\n\n*Dịch câu:* Do thời tiết xấu, buổi hòa nhạc ngoài trời đã bị _____."
+  },
+  {
+    "number": 41,
+    "text": "The brochure provides _____ information about our services.",
+    "options": {
+      "A": "detail",
+      "B": "detailed",
+      "C": "detailing",
+      "D": "details"
+    },
+    "correctAnswer": "B",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ của gốc 'detail' ⇒ Câu hỏi về Từ loại.\nSử dụng mẹo ngữ pháp: Đứng trước danh từ 'information' ⇒ Cần điền một tính từ. Phân từ hai 'detailed' hoạt động như tính từ mang nghĩa 'chi tiết/được trình bày chi tiết' bổ nghĩa cho danh từ.\n\n*Dịch câu:* Sách quảng cáo cung cấp thông tin _____ về các dịch vụ của chúng tôi."
+  },
+  {
+    "number": 42,
+    "text": "Ms. Carter was selected for the position because of her _____ experience.",
+    "options": {
+      "A": "extensive",
+      "B": "extension",
+      "C": "extensively",
+      "D": "extend"
+    },
+    "correctAnswer": "A",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ của gốc 'extend' ⇒ Câu hỏi về Từ loại.\nSử dụng mẹo ngữ pháp: Chỗ trống đứng sau tính từ sở hữu 'her' và đứng trước danh từ 'experience' ⇒ Cần một tính từ (Adjective) bổ nghĩa cho danh từ.\n\n*Dịch câu:* Cô Carter được chọn vào vị trí này vì kinh nghiệm _____ của cô ấy."
+  },
+  {
+    "number": 43,
+    "text": "We need to hire an assistant who is _____ in both English and Spanish.",
+    "options": {
+      "A": "fluent",
+      "B": "fluently",
+      "C": "fluency",
+      "D": "fluents"
+    },
+    "correctAnswer": "A",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ của gốc 'fluent' ⇒ Câu hỏi về Từ loại.\nSử dụng mẹo ngữ pháp: Đứng sau động từ liên kết 'is' và trước trạng ngữ chỉ phạm vi 'in both...' ⇒ Chỗ trống cần điền một tính từ (Adjective).\n\n*Dịch câu:* Chúng tôi cần thuê một trợ lý người _____ cả tiếng Anh và tiếng Tây Ban Nha."
+  },
+  {
+    "number": 44,
+    "text": "The budget proposal must be approved by the board of _____.",
+    "options": {
+      "A": "directors",
+      "B": "direct",
+      "C": "direction",
+      "D": "directly"
+    },
+    "correctAnswer": "A",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ của gốc 'direct' ⇒ Câu hỏi về Từ loại / Cụm từ cố định.\nSử dụng mẹo ngữ pháp: Đứng sau giới từ 'of' cần điền một danh từ. Cụm danh từ ghép cố định: 'board of directors' mang nghĩa là hội đồng quản trị / ban giám đốc.\n\n*Dịch câu:* Đề xuất ngân sách phải được thông qua bởi Hội đồng _____."
+  },
+  {
+    "number": 45,
+    "text": "The construction of the new office building is ahead of _____.",
+    "options": {
+      "A": "schedule",
+      "B": "scheduled",
+      "C": "scheduling",
+      "D": "schedules"
+    },
+    "correctAnswer": "A",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng của danh từ/động từ 'schedule' ⇒ Giới từ / Cụm từ cố định.\nSử dụng mẹo ngữ pháp: Cụm từ chỉ thời gian hoàn thành trước thời hạn kế hoạch: 'ahead of schedule' (trước lịch trình / kế hoạch).\n\n*Dịch câu:* Việc xây dựng tòa nhà văn phòng mới đang vượt trước _____."
+  },
+  {
+    "number": 46,
+    "text": "Customers can request a refund if they are not _____ with the product.",
+    "options": {
+      "A": "satisfy",
+      "B": "satisfied",
+      "C": "satisfying",
+      "D": "satisfaction"
+    },
+    "correctAnswer": "B",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng biến đổi của động từ 'satisfy' ⇒ Câu hỏi về Từ loại / Tính từ phân từ.\nSử dụng mẹo ngữ pháp: Đứng sau trạng từ phủ định 'not' và động từ 'are', trước giới từ 'with' ⇒ Cần một tính từ mô tả cảm xúc của khách hàng. Ta chọn tính từ phân từ bị động 'satisfied' (hài lòng với...).\n\n*Dịch câu:* Khách hàng có thể yêu cầu hoàn tiền nếu họ không _____ với sản phẩm."
+  },
+  {
+    "number": 47,
+    "text": "The guest speaker gave an _____ talk on leadership.",
+    "options": {
+      "A": "inspire",
+      "B": "inspiring",
+      "C": "inspiration",
+      "D": "inspired"
+    },
+    "correctAnswer": "B",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ của gốc 'inspire' ⇒ Câu hỏi về Từ loại.\nSử dụng mẹo ngữ pháp: Chỗ trống đứng sau mạo từ 'an' và đứng trước danh từ 'talk' ⇒ Cần một tính từ. Sử dụng tính từ dạng phân từ chủ động 'inspiring' (mang tính truyền cảm hứng) để bổ nghĩa cho cuộc nói chuyện.\n\n*Dịch câu:* Diễn giả khách mời đã có một bài nói chuyện _____ về khả năng lãnh đạo."
+  },
+  {
+    "number": 48,
+    "text": "We must find a way to reduce our _____ costs.",
+    "options": {
+      "A": "operate",
+      "B": "operating",
+      "C": "operation",
+      "D": "operational"
+    },
+    "correctAnswer": "B",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ của gốc 'operate' ⇒ Câu hỏi về Từ loại / Danh từ ghép.\nSử dụng mẹo ngữ pháp: Chỗ trống đứng trước danh từ 'costs' ⇒ Cần điền một phân từ đóng vai trò tính từ. Cụm từ chỉ chi phí hoạt động/vận hành doanh nghiệp: 'operating costs'.\n\n*Dịch câu:* Chúng ta phải tìm cách giảm thiểu chi phí _____ của mình."
+  },
+  {
+    "number": 49,
+    "text": "The new product has received very _____ reviews from customers.",
+    "options": {
+      "A": "positive",
+      "B": "positively",
+      "C": "positiveness",
+      "D": "positivity"
+    },
+    "correctAnswer": "A",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ của gốc 'positive' ⇒ Câu hỏi về Từ loại.\nSử dụng mẹo ngữ pháp: Chỗ trống đứng sau trạng từ chỉ mức độ 'very' và đứng trước danh từ số nhiều 'reviews' ⇒ Cần điền một tính từ (Adjective) bổ nghĩa cho danh từ.\n\n*Dịch câu:* Sản phẩm mới đã nhận được những phản hồi rất _____ từ khách hàng."
+  },
+  {
+    "number": 50,
+    "text": "Please let us know if you need any _____ assistance.",
+    "options": {
+      "A": "addition",
+      "B": "additional",
+      "C": "additionally",
+      "D": "additions"
+    },
+    "correctAnswer": "B",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ của gốc 'addition' ⇒ Câu hỏi về Từ loại.\nSử dụng mẹo ngữ pháp: Chỗ trống đứng sau tính từ chỉ số lượng 'any' và trước danh từ 'assistance' ⇒ Cần điền tính từ (Adjective) bổ nghĩa cho danh từ đó.\n\n*Dịch câu:* Vui lòng cho chúng tôi biết nếu bạn cần bất kỳ sự hỗ trợ _____ nào."
+  },
+  {
+    "number": 51,
+    "text": "The office will be closed on Friday in _____ of the national holiday.",
+    "options": {
+      "A": "observe",
+      "B": "observance",
+      "C": "observant",
+      "D": "observes"
+    },
+    "correctAnswer": "B",
+    "explanation": "Xác định dạng câu hỏi: Các đáp án là các dạng từ của gốc 'observe' ⇒ Câu hỏi về Cụm từ cố định.\nSử dụng mẹo ngữ pháp: Cụm từ chỉ hành động kỷ niệm/nghỉ lễ: 'in observance of something' (để kỷ niệm / tuân theo ngày lễ).\n\n*Dịch câu:* Văn phòng sẽ đóng cửa vào thứ Sáu để _____ ngày lễ quốc gia."
+  }
+]
