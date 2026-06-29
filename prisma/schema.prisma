@@ -88,13 +88,26 @@ model Question {
 
 // User model
 model User {
-  id             String   @id @default(uuid())
-  username       String   @unique
+  id             String         @id @default(uuid())
+  username       String         @unique
   password       String
   plainPassword  String?
   name           String
-  role           String   @default("student") // "admin" | "student"
-  allowedCourses Json?    // Danh sách khóa học được phép học (ví dụ: ["toan-9-he-2k12"])
-  allowedExams   Json?    // Danh sách đề thi được làm (ví dụ: ["progress-test-1"])
-  createdAt      DateTime @default(now())
+  role           String         @default("student") // "admin" | "student"
+  allowedCourses Json?          // Danh sách khóa học được phép học (ví dụ: ["toan-9-he-2k12"])
+  allowedExams   Json?          // Danh sách đề thi được làm (ví dụ: ["progress-test-1"])
+  createdAt      DateTime       @default(now())
+  notifications  Notification[]
+}
+
+// Notification model
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  content   String
+  type      String   @default("info") // "info" | "success" | "warning" | "alert"
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
 }
