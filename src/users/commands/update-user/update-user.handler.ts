@@ -9,7 +9,20 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute(command: UpdateUserCommand) {
-    const { id, username, name, password, allowedCourses, allowedExams } = command.dto;
+    const {
+      id,
+      username,
+      name,
+      password,
+      allowedCourses,
+      allowedExams,
+      targetOverall,
+      targetReading,
+      targetListening,
+      targetWriting,
+      targetSpeaking,
+      examDate,
+    } = command.dto;
 
     if (!id) throw new BadRequestException('User ID is required');
 
@@ -39,6 +52,12 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
         plainPassword: password !== undefined ? password : undefined,
         allowedCourses: allowedCourses !== undefined ? allowedCourses : undefined,
         allowedExams: allowedExams !== undefined ? allowedExams : undefined,
+        targetOverall: targetOverall !== undefined ? targetOverall : undefined,
+        targetReading: targetReading !== undefined ? targetReading : undefined,
+        targetListening: targetListening !== undefined ? targetListening : undefined,
+        targetWriting: targetWriting !== undefined ? targetWriting : undefined,
+        targetSpeaking: targetSpeaking !== undefined ? targetSpeaking : undefined,
+        examDate: examDate !== undefined ? examDate : undefined,
       },
       select: {
         id: true,
@@ -48,6 +67,12 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
         allowedCourses: true,
         allowedExams: true,
         plainPassword: true,
+        targetOverall: true,
+        targetReading: true,
+        targetListening: true,
+        targetWriting: true,
+        targetSpeaking: true,
+        examDate: true,
         createdAt: true,
       },
     });

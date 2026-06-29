@@ -98,6 +98,12 @@ model User {
   allowedExams   Json?          // Danh sách đề thi được làm (ví dụ: ["progress-test-1"])
   createdAt      DateTime       @default(now())
   notifications  Notification[]
+  targetOverall   String?
+  targetReading   String?
+  targetListening String?
+  targetWriting   String?
+  targetSpeaking  String?
+  examDate        String?       // Format: YYYY-MM-DD
 }
 
 // Notification model

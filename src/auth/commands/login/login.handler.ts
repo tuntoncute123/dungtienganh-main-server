@@ -67,6 +67,12 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
         role: user.role,
         allowedCourses: user.allowedCourses || [],
         allowedExams: user.allowedExams || [],
+        targetOverall: user.targetOverall || '',
+        targetReading: user.targetReading || '',
+        targetListening: user.targetListening || '',
+        targetWriting: user.targetWriting || '',
+        targetSpeaking: user.targetSpeaking || '',
+        examDate: user.examDate || '',
       },
     };
   }

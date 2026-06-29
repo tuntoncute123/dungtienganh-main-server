@@ -9,7 +9,19 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute(command: CreateUserCommand) {
-    const { username, password, name, allowedCourses, allowedExams } = command.dto;
+    const {
+      username,
+      password,
+      name,
+      allowedCourses,
+      allowedExams,
+      targetOverall,
+      targetReading,
+      targetListening,
+      targetWriting,
+      targetSpeaking,
+      examDate,
+    } = command.dto;
 
     if (!username || !password || !name) {
       throw new BadRequestException('Username, password and name are required');
@@ -32,6 +44,12 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
         role: 'student',
         allowedCourses: allowedCourses || [],
         allowedExams: allowedExams || [],
+        targetOverall: targetOverall || '',
+        targetReading: targetReading || '',
+        targetListening: targetListening || '',
+        targetWriting: targetWriting || '',
+        targetSpeaking: targetSpeaking || '',
+        examDate: examDate || '',
       },
       select: {
         id: true,
@@ -41,6 +59,12 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
         allowedCourses: true,
         allowedExams: true,
         plainPassword: true,
+        targetOverall: true,
+        targetReading: true,
+        targetListening: true,
+        targetWriting: true,
+        targetSpeaking: true,
+        examDate: true,
         createdAt: true,
       },
     });

@@ -8,6 +8,7 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateUserCommand } from './commands/create-user/create-user.command.js';
@@ -16,6 +17,8 @@ import { DeleteUserCommand } from './commands/delete-user/delete-user.command.js
 import { GetUsersQuery } from './queries/get-users/get-users.query.js';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
+import { JwtGuard } from '../common/guards/jwt.guard.js';
+import { CurrentUser } from '../common/decorators/current-user.decorator.js';
 
 @Controller('api/users')
 export class UsersController {
@@ -23,6 +26,13 @@ export class UsersController {
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) {}
+
+  // GET /api/users/profile — lấy thông tin profile của user hiện tại
+  @Get('profile')
+  @UseGuards(JwtGuard)
+  async getProfile(@CurrentUser() user: any) {
+    return this.queryBus.execute(new GetUsersQuery(user.id));
+  }
 
   // GET /api/users — danh sách học sinh
   @Get()
