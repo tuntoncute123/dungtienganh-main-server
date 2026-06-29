@@ -7,19 +7,38 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   private client: Redis;
 
   onModuleInit() {
-    this.client = new Redis({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379'),
-      password: process.env.REDIS_PASSWORD || undefined,
-      retryStrategy: (times) => {
-        if (times > 3) {
-          this.logger.warn('Redis connection failed, caching disabled');
-          return null; // stop retrying
-        }
-        return Math.min(times * 200, 1000);
-      },
+    const retryStrategy = (times: number) => {
+      if (times > 3) {
+        this.logger.warn('Redis connection failed, caching disabled');
+        return null; // stop retrying
+      }
+      return Math.min(times * 200, 1000);
+    };
+
+    const redisUrl = process.env.REDIS_URL;
+    const useTls = process.env.REDIS_TLS === 'true' || redisUrl?.startsWith('rediss://');
+
+    const options: any = {
+      retryStrategy,
       lazyConnect: true,
-    });
+    };
+
+    if (useTls) {
+      options.tls = {
+        rejectUnauthorized: false,
+      };
+    }
+
+    if (redisUrl) {
+      this.client = new Redis(redisUrl, options);
+    } else {
+      this.client = new Redis({
+        host: process.env.REDIS_HOST || 'localhost',
+        port: parseInt(process.env.REDIS_PORT || '6379'),
+        password: process.env.REDIS_PASSWORD || undefined,
+        ...options,
+      });
+    }
 
     this.client.on('connect', () => this.logger.log('Redis connected ✅'));
     this.client.on('error', (err) => this.logger.warn(`Redis error: ${err.message}`));
