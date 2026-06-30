@@ -17,6 +17,25 @@ model Story {
   createdAt  DateTime @default(now())
 }
 
+// Course model
+model Course {
+  id          String   @id // Dạng slug (ví dụ: "tieng-anh-9-he-2k12")
+  title       String
+  thumbnail   String?
+  teachers    Json?    // Mảng JSON lưu tên giáo viên: ["Cô Dung", "Tổ Tiếng Anh"]
+  videos      String?  // Ví dụ: "12 Video"
+  exercises   String?  // Ví dụ: "0 Bài tập"
+  exams       String?  // Ví dụ: "0 Bài thi"
+  priceMain   String?  // Ví dụ: "300.000"
+  priceSale   String?  // Ví dụ: "200.000"
+  saleTag     String?  // Ví dụ: "33%"
+  grade       String   // Lớp: "8" | "9" | "10" | "11" | "12"
+  isHot       Boolean  @default(false)
+  hotIcon     String?
+  createdAt   DateTime @default(now())
+  lessons     Lesson[]
+}
+
 // Lesson model
 model Lesson {
   id            String    @id @default(uuid())
@@ -25,6 +44,7 @@ model Lesson {
   duration      String
   thumbnail     String?
   playlistId    String?
+  course        Course?   @relation(fields: [playlistId], references: [id], onDelete: SetNull)
   exerciseId    String?
   documents     Json?
   quizPoints    Json?

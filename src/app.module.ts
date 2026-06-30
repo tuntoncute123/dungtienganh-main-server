@@ -12,6 +12,7 @@ import { FlashcardsModule } from './flashcards/flashcards.module.js';
 import { ExamsModule } from './exams/exams.module.js';
 import { UploadModule } from './upload/upload.module.js';
 import { NotificationsModule } from './notifications/notifications.module.js';
+import { CoursesModule } from './courses/courses.module.js';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { NotificationsModule } from './notifications/notifications.module.js';
     ExamsModule,
     UploadModule,
     NotificationsModule,
+    CoursesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

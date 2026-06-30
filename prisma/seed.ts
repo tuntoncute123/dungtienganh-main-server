@@ -416,7 +416,7 @@ async function main() {
         examId: q.examId,
         number: q.number,
         text: q.text,
-        options: q.options || undefined,
+        options: q.options || {},
         correctAnswer: q.correctAnswer,
         explanation: q.explanation || undefined,
       },

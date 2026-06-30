@@ -7,6 +7,7 @@ import { existsSync } from 'fs';
 import * as path from 'path';
 import { promisify } from 'util';
 import { exec } from 'child_process';
+import { Jimp } from 'jimp';
 
 const execPromise = promisify(exec);
 const ffmpeg = require('ffmpeg-static');
@@ -20,9 +21,26 @@ export class UploadFileHandler implements ICommandHandler<UploadFileCommand> {
     }
 
     const isVideo = file.mimetype && file.mimetype.startsWith('video/');
+    const isImage = file.mimetype && file.mimetype.startsWith('image/');
     let uploadBuffer = file.buffer;
     let finalMimetype = file.mimetype;
     let finalFilename = `${Date.now()}-${file.originalname.replace(/\s+/g, '-')}`;
+
+    // If it's an image, compress and resize it
+    if (isImage) {
+      try {
+        const image = await Jimp.read(file.buffer);
+        if (image.width > 800) {
+          image.resize({ w: 800 });
+        }
+        uploadBuffer = await image.getBuffer('image/jpeg');
+        finalMimetype = 'image/jpeg';
+        const ext = path.extname(finalFilename);
+        finalFilename = finalFilename.replace(ext, '.jpg');
+      } catch (err) {
+        console.error('Error during image compression:', err);
+      }
+    }
 
     // If it's a video, disable timeout and compress it via FFmpeg
     if (isVideo) {
