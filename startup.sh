@@ -9,6 +9,7 @@ else
 fi
 
 echo "Running prisma migrations..."
+npx prisma migrate resolve --applied 20260630053252_add_course_model || true
 npx prisma migrate deploy
 MIGRATE_STATUS=$?
 echo "Migration finished with exit code: $MIGRATE_STATUS"
