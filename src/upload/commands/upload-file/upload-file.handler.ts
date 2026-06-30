@@ -79,7 +79,7 @@ export class UploadFileHandler implements ICommandHandler<UploadFileCommand> {
 
         const files = await fs.readdir(hlsOutputDir);
 
-        if (r2KeyId && r2Secret && r2Bucket && r2Endpoint) {
+        if (r2KeyId && r2Secret && r2Bucket && r2Endpoint && r2PublicUrl) {
           const s3Client = new S3Client({
             region: 'auto',
             endpoint: r2Endpoint,
@@ -157,7 +157,7 @@ export class UploadFileHandler implements ICommandHandler<UploadFileCommand> {
     const r2PublicUrl = process.env.CLOUDFLARE_R2_PUBLIC_URL;
 
     try {
-      if (r2KeyId && r2Secret && r2Bucket && r2Endpoint) {
+      if (r2KeyId && r2Secret && r2Bucket && r2Endpoint && r2PublicUrl) {
         // Cloudflare R2 S3 Client upload
         const s3Client = new S3Client({
           region: 'auto',
