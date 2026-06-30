@@ -15,6 +15,7 @@ async function bootstrap() {
   // Serve static files from public/uploads folder for local fallback
   const uploadDir = join(process.cwd(), '..', 'public', 'uploads');
   app.use('/uploads', express.static(uploadDir));
+  // Test webhook redeploy trigger comment
 
   await app.listen(3001);
 }
