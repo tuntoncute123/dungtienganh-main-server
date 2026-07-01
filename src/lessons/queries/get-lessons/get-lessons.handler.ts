@@ -29,6 +29,19 @@ export class GetLessonsHandler implements IQueryHandler<GetLessonsQuery> {
       return lesson;
     }
 
+    if (query.playlistId) {
+      const cacheKey = `lessons:playlist:${query.playlistId}`;
+      const cached = await this.redis.get(cacheKey);
+      if (cached) return JSON.parse(cached);
+
+      const lessons = await this.prisma.lesson.findMany({
+        where: { playlistId: query.playlistId },
+        orderBy: { createdAt: 'asc' },
+      });
+      await this.redis.set(cacheKey, JSON.stringify(lessons), CACHE_TTL);
+      return lessons;
+    }
+
     const cacheKey = 'lessons:all';
     const cached = await this.redis.get(cacheKey);
     if (cached) return JSON.parse(cached);

@@ -24,10 +24,13 @@ export class LessonsController {
     private readonly queryBus: QueryBus,
   ) {}
 
-  // GET /api/lessons?id=xxx
+  // GET /api/lessons?id=xxx&playlistId=yyy
   @Get()
-  async getLessons(@Query('id') id?: string) {
-    return this.queryBus.execute(new GetLessonsQuery(id));
+  async getLessons(
+    @Query('id') id?: string,
+    @Query('playlistId') playlistId?: string,
+  ) {
+    return this.queryBus.execute(new GetLessonsQuery(id, playlistId));
   }
 
   // POST /api/lessons
