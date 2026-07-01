@@ -34,6 +34,19 @@ export class UsersController {
     return this.queryBus.execute(new GetUsersQuery(user.id));
   }
 
+  // PUT /api/users/profile — học sinh tự cập nhật thông tin cá nhân (họ tên, mật khẩu)
+  @Put('profile')
+  @UseGuards(JwtGuard)
+  async updateProfile(@CurrentUser() user: any, @Body() dto: any) {
+    const updateDto = {
+      ...dto,
+      id: user.id, // Luôn ép buộc id là id của user đăng nhập
+      allowedCourses: undefined, // Không cho phép tự đổi khóa học
+      allowedExams: undefined,   // Không cho phép tự đổi đề thi
+    };
+    return this.commandBus.execute(new UpdateUserCommand(updateDto));
+  }
+
   // GET /api/users — danh sách học sinh
   @Get()
   async getStudents() {
