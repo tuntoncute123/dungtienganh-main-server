@@ -20,6 +20,31 @@ const MULTIPART_THRESHOLD = 50 * 1024 * 1024; // 50MB
 // Kích thước mỗi chunk khi upload (S3 tối thiểu 5MB, tối đa 5GB/part)
 const CHUNK_SIZE = 40 * 1024 * 1024; // 40MB
 
+function cleanFilename(originalName: string): string {
+  const ext = path.extname(originalName);
+  let name = originalName.substring(0, originalName.length - ext.length);
+
+  // Chuyển tiếng Việt có dấu thành không dấu
+  name = name
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'd');
+
+  // Chuyển chữ thường, bỏ ký tự đặc biệt
+  name = name
+    .toLowerCase()
+    .replace(/[^a-z0-9\-_]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+  if (!name) {
+    name = 'file';
+  }
+
+  return `${Date.now()}-${name}${ext.toLowerCase()}`;
+}
+
 @CommandHandler(UploadFileCommand)
 export class UploadFileHandler implements ICommandHandler<UploadFileCommand> {
 
@@ -161,8 +186,22 @@ export class UploadFileHandler implements ICommandHandler<UploadFileCommand> {
       if ((req as any).socket) (req as any).socket.setTimeout(0);
     }
 
+    // Lấy thư mục từ query hoặc body
+    const folder = (req.query?.folder as string) || (req.body?.folder as string) || '';
+    let folderPrefix = '';
+    if (folder) {
+      folderPrefix = folder
+        .replace(/\\/g, '/')
+        .replace(/^\/+|\/+$/g, '')
+        .replace(/[^a-zA-Z0-9_\-\/]/g, '');
+      if (folderPrefix) {
+        folderPrefix = folderPrefix + '/';
+      }
+    }
+
     let finalMimetype: string = file.mimetype;
-    let finalFilename = `${Date.now()}-${file.originalname.replace(/\s+/g, '-')}`;
+    const cleanedName = cleanFilename(file.originalname);
+    let finalFilename = `${folderPrefix}${cleanedName}`;
 
     const r2KeyId = process.env.CLOUDFLARE_R2_ACCESS_KEY_ID;
     const r2Secret = process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY;
@@ -223,11 +262,12 @@ export class UploadFileHandler implements ICommandHandler<UploadFileCommand> {
 
       } else {
         // --- Fallback: lưu xuống disk local ---
-        const uploadDir = path.join(process.cwd(), '..', 'public', 'uploads');
+        const uploadDir = path.join(process.cwd(), '..', 'public', 'uploads', folderPrefix);
         await fs.mkdir(uploadDir, { recursive: true });
-        const destPath = path.join(uploadDir, finalFilename);
+        const filenameOnly = path.basename(finalFilename);
+        const destPath = path.join(uploadDir, filenameOnly);
         await fs.copyFile(tempFilePath, destPath);
-        return { url: `/uploads/${finalFilename}` };
+        return { url: `/uploads/${folderPrefix}${filenameOnly}` };
       }
 
     } catch (error: any) {

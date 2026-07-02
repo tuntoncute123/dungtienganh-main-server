@@ -17,6 +17,31 @@ import * as os from 'os';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
+function cleanFilename(originalName: string): string {
+  const ext = originalName.includes('.') ? originalName.substring(originalName.lastIndexOf('.')) : '';
+  let name = originalName.substring(0, originalName.length - ext.length);
+
+  // Chuyển tiếng Việt có dấu thành không dấu
+  name = name
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'd');
+
+  // Chuyển chữ thường, bỏ ký tự đặc biệt
+  name = name
+    .toLowerCase()
+    .replace(/[^a-z0-9\-_]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+  if (!name) {
+    name = 'file';
+  }
+
+  return `${Date.now()}-${name}${ext.toLowerCase()}`;
+}
+
 @Controller('api/upload')
 export class UploadController {
   constructor(private readonly commandBus: CommandBus) {}
@@ -48,6 +73,7 @@ export class UploadController {
   async getPresignedUrl(
     @Query('filename') filename: string,
     @Query('mimetype') mimetype: string,
+    @Query('folder') folder?: string,
   ) {
     if (!filename || !mimetype) {
       throw new BadRequestException('Missing filename or mimetype query parameters');
@@ -73,7 +99,21 @@ export class UploadController {
         },
       });
 
-      const finalFilename = `${Date.now()}-${filename.replace(/\s+/g, '-')}`;
+      // Chuẩn hóa thư mục ảo
+      let folderPrefix = '';
+      if (folder) {
+        folderPrefix = folder
+          .replace(/\\/g, '/')
+          .replace(/^\/+|\/+$/g, '')
+          .replace(/[^a-zA-Z0-9_\-\/]/g, '');
+        if (folderPrefix) {
+          folderPrefix = folderPrefix + '/';
+        }
+      }
+
+      const cleanedName = cleanFilename(filename);
+      const finalFilename = `${folderPrefix}${cleanedName}`;
+
       const command = new PutObjectCommand({
         Bucket: r2Bucket,
         Key: finalFilename,

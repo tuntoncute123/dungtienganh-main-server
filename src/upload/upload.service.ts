@@ -45,7 +45,19 @@ export class UploadService {
     }
 
     try {
-      const key = url.split('/').pop();
+      let key = url;
+      if (key.startsWith(cleanPublicUrl)) {
+        key = key.substring(cleanPublicUrl.length);
+      } else {
+        try {
+          const urlObj = new URL(url);
+          key = urlObj.pathname;
+        } catch (e) {
+          key = url.split('/').slice(3).join('/');
+        }
+      }
+      key = decodeURIComponent(key).replace(/^\//, '');
+
       if (!key) return false;
 
       this.logger.log(`Deleting object from R2: ${key}`);
