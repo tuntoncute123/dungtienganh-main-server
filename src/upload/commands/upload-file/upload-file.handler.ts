@@ -7,6 +7,8 @@ import { existsSync } from 'fs';
 import * as path from 'path';
 import { Jimp } from 'jimp';
 
+const MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024; // 2GB
+
 @CommandHandler(UploadFileCommand)
 export class UploadFileHandler implements ICommandHandler<UploadFileCommand> {
   async execute(command: UploadFileCommand) {
@@ -15,13 +17,29 @@ export class UploadFileHandler implements ICommandHandler<UploadFileCommand> {
       throw new BadRequestException('No file uploaded');
     }
 
+    // Kiểm tra kích thước file (2GB max)
+    if (file.size && file.size > MAX_FILE_SIZE) {
+      throw new BadRequestException(
+        `File quá lớn. Giới hạn tối đa là 2GB, file của bạn là ${(file.size / 1024 / 1024 / 1024).toFixed(2)}GB`,
+      );
+    }
+
     const isVideo = file.mimetype && file.mimetype.startsWith('video/');
     const isImage = file.mimetype && file.mimetype.startsWith('image/');
     let uploadBuffer = file.buffer;
     let finalMimetype = file.mimetype;
     let finalFilename = `${Date.now()}-${file.originalname.replace(/\s+/g, '-')}`;
 
-    // If it's an image, compress and resize it
+    // Vô hiệu hóa timeout cho tất cả file lớn (> 10MB) hoặc video
+    const fileSizeMB = (file.size || file.buffer?.length || 0) / 1024 / 1024;
+    if (isVideo || fileSizeMB > 10) {
+      req.setTimeout(0); // Không timeout khi upload file lớn
+      if ((req as any).socket) {
+        (req as any).socket.setTimeout(0);
+      }
+    }
+
+    // Nếu là ảnh: compress và resize
     if (isImage) {
       try {
         const image = await Jimp.read(file.buffer);
@@ -37,11 +55,6 @@ export class UploadFileHandler implements ICommandHandler<UploadFileCommand> {
       }
     }
 
-    // If it's a video, disable timeout
-    if (isVideo) {
-      req.setTimeout(0); // Disable request timeout
-    }
-
     const r2KeyId = process.env.CLOUDFLARE_R2_ACCESS_KEY_ID;
     const r2Secret = process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY;
     const r2Bucket = process.env.CLOUDFLARE_R2_BUCKET_NAME;
@@ -50,7 +63,7 @@ export class UploadFileHandler implements ICommandHandler<UploadFileCommand> {
 
     try {
       if (r2KeyId && r2Secret && r2Bucket && r2Endpoint && r2PublicUrl) {
-        // Cloudflare R2 S3 Client upload
+        // Upload lên Cloudflare R2
         const s3Client = new S3Client({
           region: 'auto',
           endpoint: r2Endpoint,
@@ -58,6 +71,10 @@ export class UploadFileHandler implements ICommandHandler<UploadFileCommand> {
             accessKeyId: r2KeyId,
             secretAccessKey: r2Secret,
           },
+          requestHandler: {
+            requestTimeout: 0,      // Không timeout khi upload
+            connectionTimeout: 0,   // Không timeout kết nối
+          } as any,
         });
 
         await s3Client.send(
@@ -66,6 +83,7 @@ export class UploadFileHandler implements ICommandHandler<UploadFileCommand> {
             Key: finalFilename,
             Body: uploadBuffer,
             ContentType: finalMimetype,
+            ContentLength: uploadBuffer.length,
           }),
         );
 
@@ -75,7 +93,7 @@ export class UploadFileHandler implements ICommandHandler<UploadFileCommand> {
 
         return { url: fileUrl };
       } else {
-        // Fallback: Save file to public/uploads/
+        // Fallback: lưu file xuống disk local
         const uploadDir = path.join(process.cwd(), '..', 'public', 'uploads');
         await fs.mkdir(uploadDir, { recursive: true });
 
@@ -90,3 +108,4 @@ export class UploadFileHandler implements ICommandHandler<UploadFileCommand> {
     }
   }
 }
+

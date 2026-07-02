@@ -8,14 +8,17 @@ import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
+
   // Enable CORS for frontend connectivity
   app.enableCors();
-  
+
+  // Tăng giới hạn body parser lên 2GB để hỗ trợ upload video nặng
+  app.use(express.json({ limit: '2gb' }));
+  app.use(express.urlencoded({ limit: '2gb', extended: true }));
+
   // Serve static files from public/uploads folder for local fallback
   const uploadDir = join(process.cwd(), '..', 'public', 'uploads');
   app.use('/uploads', express.static(uploadDir));
-  // Test webhook redeploy trigger comment
 
   await app.listen(3001);
 }
