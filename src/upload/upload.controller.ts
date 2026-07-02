@@ -2,11 +2,10 @@ import {
   Controller,
   Post,
   Get,
-  Param,
   UseInterceptors,
   UploadedFile,
   Req,
-  Body,
+  Query,
   BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -15,18 +14,12 @@ import { UploadFileCommand } from './commands/upload-file/upload-file.command.js
 import * as express from 'express';
 import { diskStorage } from 'multer';
 import * as os from 'os';
-import * as fs from 'fs/promises';
-import * as path from 'path';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 @Controller('api/upload')
 export class UploadController {
   constructor(private readonly commandBus: CommandBus) {}
-
-  // Lưu trữ trạng thái ghép và upload của từng uploadId
-  private static uploadStatuses = new Map<
-    string,
-    { status: string; url?: string; error?: string }
-  >();
 
   @Post()
   @UseInterceptors(
@@ -51,152 +44,49 @@ export class UploadController {
     return this.commandBus.execute(new UploadFileCommand(file, req));
   }
 
-  @Post('chunk')
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: os.tmpdir(),
-        filename: (req, file, cb) => {
-          const uniqueName = `chunk-tmp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-          cb(null, uniqueName);
-        },
-      }),
-      limits: {
-        fileSize: 100 * 1024 * 1024, // 100MB per chunk limit
-      },
-    }),
-  )
-  async uploadChunk(
-    @UploadedFile() file: any,
-    @Body('uploadId') uploadId: string,
-    @Body('chunkIndex') chunkIndex: string,
+  @Get('presigned-url')
+  async getPresignedUrl(
+    @Query('filename') filename: string,
+    @Query('mimetype') mimetype: string,
   ) {
-    if (!file) {
-      throw new BadRequestException('No chunk uploaded');
-    }
-    if (!uploadId || chunkIndex === undefined) {
-      await fs.unlink(file.path).catch(() => {});
-      throw new BadRequestException('Missing uploadId or chunkIndex');
+    if (!filename || !mimetype) {
+      throw new BadRequestException('Missing filename or mimetype query parameters');
     }
 
-    const chunkDir = path.join(os.tmpdir(), `upload_${uploadId}`);
-    await fs.mkdir(chunkDir, { recursive: true });
-    const destPath = path.join(chunkDir, `chunk_${chunkIndex}`);
+    const r2KeyId = process.env.CLOUDFLARE_R2_ACCESS_KEY_ID;
+    const r2Secret = process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY;
+    const r2Bucket = process.env.CLOUDFLARE_R2_BUCKET_NAME;
+    const r2Endpoint = process.env.CLOUDFLARE_R2_ENDPOINT;
+    const r2PublicUrl = process.env.CLOUDFLARE_R2_PUBLIC_URL;
 
-    // Di chuyển file chunk tạm về thư mục chứa chunks của uploadId
-    await fs.rename(file.path, destPath).catch(async () => {
-      await fs.copyFile(file.path, destPath);
-      await fs.unlink(file.path).catch(() => {});
-    });
-
-    return { success: true };
-  }
-
-  @Get('status/:uploadId')
-  async getUploadStatus(@Param('uploadId') uploadId: string) {
-    const status = UploadController.uploadStatuses.get(uploadId);
-    if (!status) {
-      return { status: 'not_found' };
+    if (!r2KeyId || !r2Secret || !r2Bucket || !r2Endpoint || !r2PublicUrl) {
+      throw new BadRequestException('Cloudflare R2 is not fully configured on the server');
     }
-    return status;
-  }
-
-  @Post('merge')
-  async mergeChunks(
-    @Body('uploadId') uploadId: string,
-    @Body('filename') filename: string,
-    @Body('mimetype') mimetype: string,
-    @Body('totalChunks') totalChunks: number,
-    @Req() req: express.Request,
-  ) {
-    if (!uploadId || !filename || !mimetype || !totalChunks) {
-      throw new BadRequestException('Missing required fields for merge');
-    }
-
-    // Đăng ký trạng thái đang xử lý (processing) ban đầu
-    UploadController.uploadStatuses.set(uploadId, { status: 'processing' });
-
-    // Kích hoạt xử lý background (không await) để phản hồi client ngay, tránh Cloudflare 524
-    this.runBackgroundMergeAndUpload(uploadId, filename, mimetype, totalChunks, req).catch(
-      (err) => {
-        console.error(`[Upload] Background merge/upload error for ${uploadId}:`, err);
-      },
-    );
-
-    return { status: 'processing', uploadId };
-  }
-
-  private async runBackgroundMergeAndUpload(
-    uploadId: string,
-    filename: string,
-    mimetype: string,
-    totalChunks: number,
-    req: express.Request,
-  ) {
-    const chunkDir = path.join(os.tmpdir(), `upload_${uploadId}`);
-    const mergedFilename = `tmp-merged-${Date.now()}-${filename.replace(/\s+/g, '-')}`;
-    const mergedFilePath = path.join(os.tmpdir(), mergedFilename);
 
     try {
-      UploadController.uploadStatuses.set(uploadId, { status: 'merging' });
-
-      // Mở file ghép để bắt đầu ghi đè
-      const mergedFileHandle = await fs.open(mergedFilePath, 'w');
-
-      // Đọc và ghép nối tiếp các chunk theo thứ tự
-      for (let i = 0; i < totalChunks; i++) {
-        const chunkPath = path.join(chunkDir, `chunk_${i}`);
-        try {
-          const chunkBuffer = await fs.readFile(chunkPath);
-          await mergedFileHandle.write(chunkBuffer);
-        } catch (err) {
-          await mergedFileHandle.close();
-          await fs.unlink(mergedFilePath).catch(() => {});
-          UploadController.uploadStatuses.set(uploadId, {
-            status: 'error',
-            error: `Missing chunk ${i}`,
-          });
-          return;
-        }
-      }
-      await mergedFileHandle.close();
-
-      // Lấy dung lượng file sau khi ghép
-      const stat = await fs.stat(mergedFilePath);
-
-      // Dọn dẹp thư mục chứa các chunk
-      await fs.rm(chunkDir, { recursive: true, force: true }).catch(() => {});
-
-      UploadController.uploadStatuses.set(uploadId, { status: 'uploading' });
-
-      // Giả lập đối tượng file của multer
-      const mockFile = {
-        fieldname: 'file',
-        originalname: filename,
-        encoding: '7bit',
-        mimetype: mimetype,
-        destination: os.tmpdir(),
-        filename: mergedFilename,
-        path: mergedFilePath,
-        size: stat.size,
-      };
-
-      // Chuyển cho command handler xử lý tải lên Cloudflare R2 giống như bình thường
-      const result = await this.commandBus.execute(new UploadFileCommand(mockFile, req));
-
-      // Lưu kết quả thành công
-      UploadController.uploadStatuses.set(uploadId, {
-        status: 'complete',
-        url: result.url,
+      const s3Client = new S3Client({
+        region: 'auto',
+        endpoint: r2Endpoint,
+        credentials: {
+          accessKeyId: r2KeyId,
+          secretAccessKey: r2Secret,
+        },
       });
 
+      const finalFilename = `${Date.now()}-${filename.replace(/\s+/g, '-')}`;
+      const command = new PutObjectCommand({
+        Bucket: r2Bucket,
+        Key: finalFilename,
+        ContentType: mimetype,
+      });
+
+      // Tạo presigned URL có hiệu lực trong 15 phút (900 giây)
+      const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: 900 });
+      const fileUrl = `${r2PublicUrl.replace(/\/$/, '')}/${finalFilename}`;
+
+      return { uploadUrl, fileUrl };
     } catch (error: any) {
-      await fs.unlink(mergedFilePath).catch(() => {});
-      await fs.rm(chunkDir, { recursive: true, force: true }).catch(() => {});
-      UploadController.uploadStatuses.set(uploadId, {
-        status: 'error',
-        error: error.message || 'Failed to merge chunks',
-      });
+      throw new BadRequestException(error.message || 'Failed to generate presigned URL');
     }
   }
 }
