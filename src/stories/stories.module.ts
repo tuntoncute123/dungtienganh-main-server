@@ -6,9 +6,10 @@ import { CreateStoryHandler } from './commands/create-story/create-story.handler
 import { UpdateStoryHandler } from './commands/update-story/update-story.handler.js';
 import { DeleteStoryHandler } from './commands/delete-story/delete-story.handler.js';
 import { GetStoriesHandler } from './queries/get-stories/get-stories.handler.js';
+import { UploadModule } from '../upload/upload.module.js';
 
 @Module({
-  imports: [CqrsModule, PrismaModule],
+  imports: [CqrsModule, PrismaModule, UploadModule],
   controllers: [StoriesController],
   providers: [CreateStoryHandler, UpdateStoryHandler, DeleteStoryHandler, GetStoriesHandler],
 })

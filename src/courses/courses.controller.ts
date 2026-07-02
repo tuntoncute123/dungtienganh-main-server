@@ -11,10 +11,14 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { UploadService } from '../upload/upload.service.js';
 
 @Controller('api/courses')
 export class CoursesController {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly uploadService: UploadService,
+  ) {}
 
   // GET /api/courses?id=xxx
   @Get()
@@ -75,6 +79,19 @@ export class CoursesController {
       throw new BadRequestException('Course ID is required');
     }
 
+    // 1. Lấy thông tin khóa học cũ
+    const oldCourse = await this.prisma.course.findUnique({
+      where: { id },
+      select: { thumbnail: true },
+    });
+
+    if (oldCourse) {
+      // 2. Nếu thumbnail thay đổi, xóa thumbnail cũ trên R2
+      if (thumbnail !== undefined && oldCourse.thumbnail && oldCourse.thumbnail !== thumbnail) {
+        await this.uploadService.deleteFileFromUrl(oldCourse.thumbnail).catch(() => {});
+      }
+    }
+
     return this.prisma.course.update({
       where: { id },
       data: {
@@ -99,6 +116,17 @@ export class CoursesController {
   async deleteCourse(@Query('id') id: string) {
     if (!id) {
       throw new BadRequestException('Course ID is required');
+    }
+
+    // 1. Lấy thông tin khóa học cũ
+    const course = await this.prisma.course.findUnique({
+      where: { id },
+      select: { thumbnail: true },
+    });
+
+    if (course) {
+      // 2. Xóa thumbnail của khóa học trên R2
+      await this.uploadService.deleteFileFromUrl(course.thumbnail).catch(() => {});
     }
 
     return this.prisma.course.delete({

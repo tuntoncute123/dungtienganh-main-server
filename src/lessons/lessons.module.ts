@@ -6,9 +6,10 @@ import { CreateLessonHandler } from './commands/create-lesson/create-lesson.hand
 import { UpdateLessonHandler } from './commands/update-lesson/update-lesson.handler.js';
 import { DeleteLessonHandler } from './commands/delete-lesson/delete-lesson.handler.js';
 import { GetLessonsHandler } from './queries/get-lessons/get-lessons.handler.js';
+import { UploadModule } from '../upload/upload.module.js';
 
 @Module({
-  imports: [CqrsModule, PrismaModule],
+  imports: [CqrsModule, PrismaModule, UploadModule],
   controllers: [LessonsController],
   providers: [CreateLessonHandler, UpdateLessonHandler, DeleteLessonHandler, GetLessonsHandler],
 })
