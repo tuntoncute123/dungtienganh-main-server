@@ -230,63 +230,121 @@ async function main() {
   await prisma.flashcardDeck.deleteMany();
   await prisma.flashcardCard.deleteMany();
 
-  const deck1 = await prisma.flashcardDeck.create({
-    data: {
+  const deckData = [
+    {
       id: "1",
       category: "vocabulary",
       categoryLabel: "Từ vựng",
       title: "TỪ VỰNG TIẾNG ANH THPTQG 2026 - CHỦ ĐỀ MÔI TRƯỜNG",
-      cardCount: 5,
       isLocked: false,
       type: "system",
+      cards: [
+        { front: "Accumulate (v)", back: "Tích lũy, gom góp lại" },
+        { front: "Prevalent (adj)", back: "Phổ biến, thịnh hành" },
+        { front: "Compensate (v)", back: "Đền bù, bồi thường, đền đáp" },
+        { front: "Simultaneous (adj)", back: "Đồng thời, cùng một lúc" },
+        { front: "Inevitably (adv)", back: "Chắc chắn xảy ra, không thể tránh khỏi" },
+      ]
     },
-  });
-
-  const cards1 = [
-    { front: "Accumulate (v)", back: "Tích lũy, gom góp lại" },
-    { front: "Prevalent (adj)", back: "Phổ biến, thịnh hành" },
-    { front: "Compensate (v)", back: "Đền bù, bồi thường, đền đáp" },
-    { front: "Simultaneous (adj)", back: "Đồng thời, cùng một lúc" },
-    { front: "Inevitably (adv)", back: "Chắc chắn xảy ra, không thể tránh khỏi" },
-  ];
-
-  for (const card of cards1) {
-    await prisma.flashcardCard.create({
-      data: {
-        deckId: deck1.id,
-        front: card.front,
-        back: card.back,
-      },
-    });
-  }
-
-  const deck2 = await prisma.flashcardDeck.create({
-    data: {
+    {
       id: "2",
-      category: "vocabulary",
-      categoryLabel: "Từ vựng",
-      title: "TỪ VỰNG TIẾNG ANH THPTQG 2026 - CHỦ ĐỀ SỨC KHỎE",
-      cardCount: 4,
+      category: "idiom",
+      categoryLabel: "Thành ngữ",
+      title: "THÀNH NGỮ THƯỜNG GẶP TRONG ĐỀ THI THPTQG",
       isLocked: false,
       type: "system",
+      cards: [
+        { front: "Piece of cake", back: "Dễ như ăn bánh, vô cùng đơn giản" },
+        { front: "Break a leg", back: "Chúc may mắn (thường dùng trong biểu diễn)" },
+        { front: "Under the weather", back: "Cảm thấy hơi mệt, không được khỏe" },
+        { front: "Burn the midnight oil", back: "Thức khuya học bài, làm việc muộn" },
+        { front: "Once in a blue moon", back: "Hiếm khi, rất ít khi xảy ra" },
+      ]
     },
-  });
-
-  const cards2 = [
-    { front: "Biodiversity (n)", back: "Đa dạng sinh học" },
-    { front: "Conservation (n)", back: "Sự bảo tồn" },
-    { front: "Vulnerable (adj)", back: "Dễ bị tổn thương, dễ gặp nguy hiểm" },
-    { front: "Deforestation (n)", back: "Nạn phá rừng" },
+    {
+      id: "3",
+      category: "phrasal_verb",
+      categoryLabel: "Cụm động từ",
+      title: "100 CỤM ĐỘNG TỪ ĐI VỚI 'TAKE', 'GET', 'GO'",
+      isLocked: false,
+      type: "system",
+      cards: [
+        { front: "Take off", back: "Cất cánh (máy bay), cởi ra (quần áo), thành công nhanh chóng" },
+        { front: "Get over", back: "Vượt qua (bệnh tật, khó khăn), quên đi" },
+        { front: "Go on", back: "Tiếp tục làm gì đó" },
+        { front: "Take after", back: "Trông giống ai đó (trong gia đình)" },
+        { front: "Get along with", back: "Có mối quan hệ tốt đẹp với ai" },
+      ]
+    },
+    {
+      id: "4",
+      category: "collocation",
+      categoryLabel: "Kết hợp từ",
+      title: "COLLOCATIONS CHỦ ĐỀ WORK & EDUCATION",
+      isLocked: false,
+      type: "system",
+      cards: [
+        { front: "Make progress", back: "Tiến bộ, có sự phát triển" },
+        { front: "Take an exam", back: "Đi thi, làm bài kiểm tra" },
+        { front: "Meet a deadline", back: "Hoàn thành công việc đúng hạn" },
+        { front: "Gain experience", back: "Tích lũy kinh nghiệm" },
+        { front: "Do research", back: "Tiến hành nghiên cứu" },
+      ]
+    },
+    {
+      id: "5",
+      category: "grammar",
+      categoryLabel: "Ngữ pháp",
+      title: "20 CHUYÊN ĐỀ NGỮ PHÁP TRỌNG TÂM",
+      isLocked: false,
+      type: "system",
+      cards: [
+        { front: "Although / Even though + Clause", back: "Mặc dù ... (chỉ sự nhượng bộ)" },
+        { front: "In spite of / Despite + Noun/V-ing", back: "Mặc dù ... (chỉ sự nhượng bộ)" },
+        { front: "Had + S + V3, S + would have + V3", back: "Câu điều kiện loại 3 (không có thật trong quá khứ)" },
+        { front: "S + wish + S + V2/ed", back: "Ước một điều trái ngược với hiện tại" },
+        { front: "It is high time + S + V2/ed", back: "Đã đến lúc ai đó phải làm gì" },
+      ]
+    },
+    {
+      id: "6",
+      category: "mixed",
+      categoryLabel: "Tổng hợp",
+      title: "TỔNG HỢP KIẾN THỨC MÙA THI 2026",
+      isLocked: false,
+      type: "system",
+      cards: [
+        { front: "Abundant (adj)", back: "Nhiều, phong phú, dồi dào" },
+        { front: "Bark up the wrong tree", back: "Lầm đường lạc lối, đổ lỗi nhầm người" },
+        { front: "Give up", back: "Từ bỏ, bỏ cuộc" },
+        { front: "Pay attention to", back: "Chú ý, để tâm vào việc gì" },
+        { front: "Provided that", back: "Miễn là, với điều kiện là" },
+      ]
+    }
   ];
 
-  for (const card of cards2) {
-    await prisma.flashcardCard.create({
+  for (const d of deckData) {
+    const deck = await prisma.flashcardDeck.create({
       data: {
-        deckId: deck2.id,
-        front: card.front,
-        back: card.back,
+        id: d.id,
+        category: d.category,
+        categoryLabel: d.categoryLabel,
+        title: d.title,
+        cardCount: d.cards.length,
+        isLocked: d.isLocked,
+        type: d.type,
       },
     });
+
+    for (const card of d.cards) {
+      await prisma.flashcardCard.create({
+        data: {
+          deckId: deck.id,
+          front: card.front,
+          back: card.back,
+        },
+      });
+    }
   }
 
   console.log("Seeded Flashcards!");
