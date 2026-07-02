@@ -1,6 +1,8 @@
 import {
   Controller,
   Post,
+  Get,
+  Param,
   UseInterceptors,
   UploadedFile,
   Req,
@@ -19,6 +21,12 @@ import * as path from 'path';
 @Controller('api/upload')
 export class UploadController {
   constructor(private readonly commandBus: CommandBus) {}
+
+  // Lưu trữ trạng thái ghép và upload của từng uploadId
+  private static uploadStatuses = new Map<
+    string,
+    { status: string; url?: string; error?: string }
+  >();
 
   @Post()
   @UseInterceptors(
@@ -84,6 +92,15 @@ export class UploadController {
     return { success: true };
   }
 
+  @Get('status/:uploadId')
+  async getUploadStatus(@Param('uploadId') uploadId: string) {
+    const status = UploadController.uploadStatuses.get(uploadId);
+    if (!status) {
+      return { status: 'not_found' };
+    }
+    return status;
+  }
+
   @Post('merge')
   async mergeChunks(
     @Body('uploadId') uploadId: string,
@@ -96,11 +113,33 @@ export class UploadController {
       throw new BadRequestException('Missing required fields for merge');
     }
 
+    // Đăng ký trạng thái đang xử lý (processing) ban đầu
+    UploadController.uploadStatuses.set(uploadId, { status: 'processing' });
+
+    // Kích hoạt xử lý background (không await) để phản hồi client ngay, tránh Cloudflare 524
+    this.runBackgroundMergeAndUpload(uploadId, filename, mimetype, totalChunks, req).catch(
+      (err) => {
+        console.error(`[Upload] Background merge/upload error for ${uploadId}:`, err);
+      },
+    );
+
+    return { status: 'processing', uploadId };
+  }
+
+  private async runBackgroundMergeAndUpload(
+    uploadId: string,
+    filename: string,
+    mimetype: string,
+    totalChunks: number,
+    req: express.Request,
+  ) {
     const chunkDir = path.join(os.tmpdir(), `upload_${uploadId}`);
     const mergedFilename = `tmp-merged-${Date.now()}-${filename.replace(/\s+/g, '-')}`;
     const mergedFilePath = path.join(os.tmpdir(), mergedFilename);
 
     try {
+      UploadController.uploadStatuses.set(uploadId, { status: 'merging' });
+
       // Mở file ghép để bắt đầu ghi đè
       const mergedFileHandle = await fs.open(mergedFilePath, 'w');
 
@@ -113,7 +152,11 @@ export class UploadController {
         } catch (err) {
           await mergedFileHandle.close();
           await fs.unlink(mergedFilePath).catch(() => {});
-          throw new BadRequestException(`Missing chunk ${i}`);
+          UploadController.uploadStatuses.set(uploadId, {
+            status: 'error',
+            error: `Missing chunk ${i}`,
+          });
+          return;
         }
       }
       await mergedFileHandle.close();
@@ -123,6 +166,8 @@ export class UploadController {
 
       // Dọn dẹp thư mục chứa các chunk
       await fs.rm(chunkDir, { recursive: true, force: true }).catch(() => {});
+
+      UploadController.uploadStatuses.set(uploadId, { status: 'uploading' });
 
       // Giả lập đối tượng file của multer
       const mockFile = {
@@ -137,12 +182,21 @@ export class UploadController {
       };
 
       // Chuyển cho command handler xử lý tải lên Cloudflare R2 giống như bình thường
-      return await this.commandBus.execute(new UploadFileCommand(mockFile, req));
+      const result = await this.commandBus.execute(new UploadFileCommand(mockFile, req));
+
+      // Lưu kết quả thành công
+      UploadController.uploadStatuses.set(uploadId, {
+        status: 'complete',
+        url: result.url,
+      });
 
     } catch (error: any) {
       await fs.unlink(mergedFilePath).catch(() => {});
       await fs.rm(chunkDir, { recursive: true, force: true }).catch(() => {});
-      throw new BadRequestException(error.message || 'Failed to merge chunks');
+      UploadController.uploadStatuses.set(uploadId, {
+        status: 'error',
+        error: error.message || 'Failed to merge chunks',
+      });
     }
   }
 }
