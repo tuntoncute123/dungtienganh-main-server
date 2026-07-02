@@ -54,7 +54,7 @@ export class UploadController {
         },
       }),
       limits: {
-        fileSize: 50 * 1024 * 1024, // 50MB per chunk limit
+        fileSize: 100 * 1024 * 1024, // 100MB per chunk limit
       },
     }),
   )

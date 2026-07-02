@@ -18,7 +18,7 @@ import { Jimp } from 'jimp';
 const MULTIPART_THRESHOLD = 50 * 1024 * 1024; // 50MB
 
 // Kích thước mỗi chunk khi upload (S3 tối thiểu 5MB, tối đa 5GB/part)
-const CHUNK_SIZE = 10 * 1024 * 1024; // 10MB
+const CHUNK_SIZE = 40 * 1024 * 1024; // 40MB
 
 @CommandHandler(UploadFileCommand)
 export class UploadFileHandler implements ICommandHandler<UploadFileCommand> {
