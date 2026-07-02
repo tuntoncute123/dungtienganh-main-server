@@ -354,4 +354,32 @@ export class QuestDbService implements OnModuleInit, OnModuleDestroy {
       return [];
     }
   }
+
+  async getPracticeSubmissionsSince(userId: string, sinceDate: string): Promise<any[]> {
+    if (!this.isConnected) return [];
+    try {
+      const res = await this.pool.query(
+        `SELECT practiceId, timestamp FROM practice_submissions WHERE userId = $1 AND timestamp >= $2`,
+        [userId, sinceDate]
+      );
+      return res.rows;
+    } catch (err: any) {
+      this.logger.error(`Failed to get submissions since: ${err.message}`);
+      return [];
+    }
+  }
+
+  async getHeartbeatsSince(userId: string, sinceDate: string): Promise<any[]> {
+    if (!this.isConnected) return [];
+    try {
+      const res = await this.pool.query(
+        `SELECT timestamp FROM user_activities WHERE userId = $1 AND activityType = 'heartbeat' AND timestamp >= $2`,
+        [userId, sinceDate]
+      );
+      return res.rows;
+    } catch (err: any) {
+      this.logger.error(`Failed to get heartbeats since: ${err.message}`);
+      return [];
+    }
+  }
 }
