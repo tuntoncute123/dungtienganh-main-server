@@ -1,59 +1,145 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UploadFileCommand } from './upload-file.command.js';
 import { BadRequestException } from '@nestjs/common';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import {
+  S3Client,
+  PutObjectCommand,
+  CreateMultipartUploadCommand,
+  UploadPartCommand,
+  CompleteMultipartUploadCommand,
+  AbortMultipartUploadCommand,
+} from '@aws-sdk/client-s3';
 import * as fs from 'fs/promises';
-import { existsSync } from 'fs';
 import * as path from 'path';
 import { Jimp } from 'jimp';
 
-const MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024; // 2GB
+// File > 50MB → dùng Multipart Upload (RAM ~10MB)
+// File < 50MB → PutObject thông thường
+const MULTIPART_THRESHOLD = 50 * 1024 * 1024; // 50MB
+
+// Kích thước mỗi chunk khi upload (S3 tối thiểu 5MB, tối đa 5GB/part)
+const CHUNK_SIZE = 10 * 1024 * 1024; // 10MB
 
 @CommandHandler(UploadFileCommand)
 export class UploadFileHandler implements ICommandHandler<UploadFileCommand> {
+
+  /** Khởi tạo S3 Client trỏ vào Cloudflare R2 */
+  private createS3Client(endpoint: string, keyId: string, secret: string): S3Client {
+    return new S3Client({
+      region: 'auto',
+      endpoint,
+      credentials: {
+        accessKeyId: keyId,
+        secretAccessKey: secret,
+      },
+      // Tắt timeout — video upload có thể mất nhiều phút
+      requestHandler: {
+        requestTimeout: 0,
+        connectionTimeout: 0,
+      } as any,
+    });
+  }
+
+  /**
+   * Multipart Upload: đọc file từ disk theo từng chunk 10MB
+   * và upload lên R2. RAM cố định ~10MB bất kể file lớn đến đâu.
+   */
+  private async uploadMultipart(
+    s3Client: S3Client,
+    bucket: string,
+    key: string,
+    filePath: string,
+    mimetype: string,
+  ): Promise<void> {
+    // Bước 1: Khởi tạo Multipart Upload → nhận uploadId
+    const createResult = await s3Client.send(
+      new CreateMultipartUploadCommand({
+        Bucket: bucket,
+        Key: key,
+        ContentType: mimetype,
+      }),
+    );
+    const uploadId = createResult.UploadId!;
+    const parts: { ETag: string; PartNumber: number }[] = [];
+
+    try {
+      // Bước 2: Đọc file từ disk theo chunk 10MB và upload từng phần
+      const fileHandle = await fs.open(filePath, 'r');
+      const fileSize = (await fileHandle.stat()).size;
+      let partNumber = 1;
+      let offset = 0;
+
+      console.log(`[Multipart] Starting upload: ${key} (${(fileSize / 1024 / 1024).toFixed(1)}MB)`);
+
+      while (offset < fileSize) {
+        const chunkSize = Math.min(CHUNK_SIZE, fileSize - offset);
+        const chunk = new Uint8Array(chunkSize);
+        await fileHandle.read(chunk, 0, chunkSize, offset);
+
+        const partResult = await s3Client.send(
+          new UploadPartCommand({
+            Bucket: bucket,
+            Key: key,
+            UploadId: uploadId,
+            PartNumber: partNumber,
+            Body: chunk,
+            ContentLength: chunkSize,
+          }),
+        );
+
+        parts.push({ ETag: partResult.ETag!, PartNumber: partNumber });
+        console.log(
+          `[Multipart] Part ${partNumber} uploaded (${(offset / 1024 / 1024).toFixed(1)}MB / ${(fileSize / 1024 / 1024).toFixed(1)}MB)`,
+        );
+
+        offset += chunkSize;
+        partNumber++;
+      }
+
+      await fileHandle.close();
+
+      // Bước 3: Hoàn tất — R2 ghép các phần lại thành file hoàn chỉnh
+      await s3Client.send(
+        new CompleteMultipartUploadCommand({
+          Bucket: bucket,
+          Key: key,
+          UploadId: uploadId,
+          MultipartUpload: { Parts: parts },
+        }),
+      );
+
+      console.log(`[Multipart] Upload complete: ${key}`);
+    } catch (error) {
+      // Nếu lỗi → Abort để tránh bị tính phí cho các phần đã upload
+      console.error(`[Multipart] Error, aborting upload: ${key}`);
+      await s3Client
+        .send(new AbortMultipartUploadCommand({ Bucket: bucket, Key: key, UploadId: uploadId }))
+        .catch(() => {});
+      throw error;
+    }
+  }
+
   async execute(command: UploadFileCommand) {
     const { file, req } = command;
     if (!file) {
       throw new BadRequestException('No file uploaded');
     }
 
-    // Kiểm tra kích thước file (2GB max)
-    if (file.size && file.size > MAX_FILE_SIZE) {
-      throw new BadRequestException(
-        `File quá lớn. Giới hạn tối đa là 2GB, file của bạn là ${(file.size / 1024 / 1024 / 1024).toFixed(2)}GB`,
-      );
+    const isVideo = file.mimetype?.startsWith('video/');
+    const isImage = file.mimetype?.startsWith('image/');
+    const fileSize: number = file.size || 0;
+
+    // file.path = đường dẫn file tạm trên disk (do diskStorage)
+    const tempFilePath: string = file.path;
+
+    // Tắt timeout cho file lớn hoặc video
+    if (isVideo || fileSize > 10 * 1024 * 1024) {
+      req.setTimeout(0);
+      if ((req as any).socket) (req as any).socket.setTimeout(0);
     }
 
-    const isVideo = file.mimetype && file.mimetype.startsWith('video/');
-    const isImage = file.mimetype && file.mimetype.startsWith('image/');
-    let uploadBuffer = file.buffer;
-    let finalMimetype = file.mimetype;
+    let finalMimetype: string = file.mimetype;
     let finalFilename = `${Date.now()}-${file.originalname.replace(/\s+/g, '-')}`;
-
-    // Vô hiệu hóa timeout cho tất cả file lớn (> 10MB) hoặc video
-    const fileSizeMB = (file.size || file.buffer?.length || 0) / 1024 / 1024;
-    if (isVideo || fileSizeMB > 10) {
-      req.setTimeout(0); // Không timeout khi upload file lớn
-      if ((req as any).socket) {
-        (req as any).socket.setTimeout(0);
-      }
-    }
-
-    // Nếu là ảnh: compress và resize
-    if (isImage) {
-      try {
-        const image = await Jimp.read(file.buffer);
-        if (image.width > 800) {
-          image.resize({ w: 800 });
-        }
-        uploadBuffer = await image.getBuffer('image/jpeg');
-        finalMimetype = 'image/jpeg';
-        const ext = path.extname(finalFilename);
-        finalFilename = finalFilename.replace(ext, '.jpg');
-      } catch (err) {
-        console.error('Error during image compression:', err);
-      }
-    }
 
     const r2KeyId = process.env.CLOUDFLARE_R2_ACCESS_KEY_ID;
     const r2Secret = process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY;
@@ -63,49 +149,72 @@ export class UploadFileHandler implements ICommandHandler<UploadFileCommand> {
 
     try {
       if (r2KeyId && r2Secret && r2Bucket && r2Endpoint && r2PublicUrl) {
-        // Upload lên Cloudflare R2
-        const s3Client = new S3Client({
-          region: 'auto',
-          endpoint: r2Endpoint,
-          credentials: {
-            accessKeyId: r2KeyId,
-            secretAccessKey: r2Secret,
-          },
-          requestHandler: {
-            requestTimeout: 0,      // Không timeout khi upload
-            connectionTimeout: 0,   // Không timeout kết nối
-          } as any,
-        });
+        const s3Client = this.createS3Client(r2Endpoint, r2KeyId, r2Secret);
 
-        await s3Client.send(
-          new PutObjectCommand({
-            Bucket: r2Bucket,
-            Key: finalFilename,
-            Body: uploadBuffer,
-            ContentType: finalMimetype,
-            ContentLength: uploadBuffer.length,
-          }),
-        );
+        if (isImage) {
+          // --- Ảnh: đọc từ disk → Jimp compress → PutObject ---
+          // (Ảnh nhỏ, cần xử lý pixel nên vẫn cần buffer trong RAM)
+          let uploadBuffer: Buffer = await fs.readFile(tempFilePath);
+          try {
+            const image = await Jimp.read(uploadBuffer);
+            if (image.width > 800) image.resize({ w: 800 });
+            const jimpBuffer = await image.getBuffer('image/jpeg');
+            uploadBuffer = Buffer.from(jimpBuffer.buffer, jimpBuffer.byteOffset, jimpBuffer.byteLength);
+            finalMimetype = 'image/jpeg';
+            finalFilename = finalFilename.replace(path.extname(finalFilename), '.jpg');
+          } catch (err) {
+            console.error('[Upload] Image compression error:', err);
+          }
 
-        const fileUrl = r2PublicUrl
-          ? `${r2PublicUrl.replace(/\/$/, '')}/${finalFilename}`
-          : `${r2Endpoint}/${r2Bucket}/${finalFilename}`;
+          await s3Client.send(
+            new PutObjectCommand({
+              Bucket: r2Bucket,
+              Key: finalFilename,
+              Body: uploadBuffer,
+              ContentType: finalMimetype,
+              ContentLength: uploadBuffer.length,
+            }),
+          );
 
+        } else if (fileSize > MULTIPART_THRESHOLD) {
+          // --- File lớn (video, PDF nặng, ...): Multipart Upload ---
+          // RAM cố định ~10MB bất kể file lớn đến đâu
+          await this.uploadMultipart(s3Client, r2Bucket, finalFilename, tempFilePath, finalMimetype);
+
+        } else {
+          // --- File nhỏ < 50MB: PutObject thông thường ---
+          const uploadBuffer = await fs.readFile(tempFilePath);
+          await s3Client.send(
+            new PutObjectCommand({
+              Bucket: r2Bucket,
+              Key: finalFilename,
+              Body: uploadBuffer,
+              ContentType: finalMimetype,
+              ContentLength: uploadBuffer.length,
+            }),
+          );
+        }
+
+        const fileUrl = `${r2PublicUrl.replace(/\/$/, '')}/${finalFilename}`;
         return { url: fileUrl };
+
       } else {
-        // Fallback: lưu file xuống disk local
+        // --- Fallback: lưu xuống disk local ---
         const uploadDir = path.join(process.cwd(), '..', 'public', 'uploads');
         await fs.mkdir(uploadDir, { recursive: true });
-
-        const filePath = path.join(uploadDir, finalFilename);
-        await fs.writeFile(filePath, uploadBuffer);
-
-        const fileUrl = `/uploads/${finalFilename}`;
-        return { url: fileUrl };
+        const destPath = path.join(uploadDir, finalFilename);
+        await fs.copyFile(tempFilePath, destPath);
+        return { url: `/uploads/${finalFilename}` };
       }
+
     } catch (error: any) {
       throw new BadRequestException(error.message || 'Failed to upload file');
+
+    } finally {
+      // LUÔN xóa file tạm sau khi upload xong (dù thành công hay thất bại)
+      if (tempFilePath) {
+        await fs.unlink(tempFilePath).catch(() => {});
+      }
     }
   }
 }
-
