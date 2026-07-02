@@ -2,11 +2,15 @@ import { Controller, Post, Get, Body, UseGuards, Query } from '@nestjs/common';
 import { JwtGuard } from '../common/guards/jwt.guard.js';
 import { CurrentUser } from '../common/decorators/current-user.decorator.js';
 import { QuestDbService } from './questdb.service.js';
+import { PrismaService } from '../prisma/prisma.service.js';
 
 @Controller('api/tracking')
 @UseGuards(JwtGuard)
 export class TrackingController {
-  constructor(private readonly questDbService: QuestDbService) {}
+  constructor(
+    private readonly questDbService: QuestDbService,
+    private readonly prismaService: PrismaService
+  ) {}
 
   // POST /api/tracking/activity - Log user activities (page views, lesson views, heartbeats)
   @Post('activity')
@@ -59,5 +63,43 @@ export class TrackingController {
       heatmap,
       chart,
     };
+  }
+
+  // GET /api/tracking/lesson-progress - Get saved playback time for a video lesson
+  @Get('lesson-progress')
+  async getLessonProgress(
+    @CurrentUser() user: any,
+    @Query('lessonId') lessonId: string
+  ) {
+    return this.questDbService.getLessonProgress(user.id, lessonId);
+  }
+
+  // GET /api/tracking/recent-in-progress - Get list of lessons currently in-progress
+  @Get('recent-in-progress')
+  async getRecentInProgress(@CurrentUser() user: any) {
+    const progressList = await this.questDbService.getRecentLessonsInProgress(user.id);
+    if (progressList.length === 0) return [];
+
+    const lessonIds = progressList.map((p) => p.lessonId);
+    const lessons = await this.prismaService.lesson.findMany({
+      where: { id: { in: lessonIds } },
+      include: { course: true },
+    });
+
+    const lessonMap = new Map(lessons.map((l) => [l.id, l]));
+    return progressList
+      .map((p) => {
+        const lesson = lessonMap.get(p.lessonId);
+        if (!lesson) return null;
+        return {
+          ...p,
+          title: lesson.title,
+          duration: lesson.duration,
+          thumbnail: lesson.thumbnail,
+          courseTitle: lesson.course?.title || '',
+          courseId: lesson.playlistId || '',
+        };
+      })
+      .filter(Boolean);
   }
 }

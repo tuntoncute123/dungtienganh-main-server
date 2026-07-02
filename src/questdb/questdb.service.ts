@@ -284,4 +284,74 @@ export class QuestDbService implements OnModuleInit, OnModuleDestroy {
       return [];
     }
   }
+
+  async getLessonProgress(userId: string, lessonId: string): Promise<any | null> {
+    if (!this.isConnected) return null;
+    try {
+      const res = await this.pool.query(
+        `SELECT metadata, timestamp 
+         FROM user_activities
+         WHERE userId = $1 
+           AND activityType = 'video_progress' 
+           AND targetId = $2
+         ORDER BY timestamp DESC
+         LIMIT 1`,
+        [userId, lessonId]
+      );
+      if (res.rows.length === 0) return null;
+      try {
+        const metadata = JSON.parse(res.rows[0].metadata);
+        return {
+          currentTime: metadata.currentTime || 0,
+          duration: metadata.duration || 0,
+          progressPercent: metadata.progressPercent || 0,
+          timestamp: res.rows[0].timestamp,
+        };
+      } catch (e) {
+        return null;
+      }
+    } catch (err: any) {
+      this.logger.error(`Failed to get lesson progress: ${err.message}`);
+      return null;
+    }
+  }
+
+  async getRecentLessonsInProgress(userId: string): Promise<any[]> {
+    if (!this.isConnected) return [];
+    try {
+      // In QuestDB: LATEST BY targetId returns the most recent record for each targetId
+      const res = await this.pool.query(
+        `SELECT targetId, metadata, timestamp 
+         FROM user_activities
+         WHERE userId = $1 
+           AND activityType = 'video_progress'
+         LATEST BY targetId`,
+        [userId]
+      );
+
+      const inProgress: any[] = [];
+      res.rows.forEach((row: any) => {
+        try {
+          const metadata = JSON.parse(row.metadata);
+          const progressPercent = metadata.progressPercent || 0;
+          // Chỉ lấy các bài giảng đang học dở dang (< 100%)
+          if (progressPercent > 0 && progressPercent < 100) {
+            inProgress.push({
+              lessonId: row.targetId,
+              currentTime: metadata.currentTime || 0,
+              duration: metadata.duration || 0,
+              progressPercent,
+              timestamp: row.timestamp,
+            });
+          }
+        } catch (e) {}
+      });
+
+      // Sắp xếp bài giảng vừa học lên trên cùng
+      return inProgress.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    } catch (err: any) {
+      this.logger.error(`Failed to get recent in progress lessons: ${err.message}`);
+      return [];
+    }
+  }
 }
