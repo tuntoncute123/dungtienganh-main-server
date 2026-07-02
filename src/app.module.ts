@@ -14,6 +14,7 @@ import { UploadModule } from './upload/upload.module.js';
 import { NotificationsModule } from './notifications/notifications.module.js';
 import { CoursesModule } from './courses/courses.module.js';
 import { QuestDbModule } from './questdb/questdb.module.js';
+import { BackupModule } from './backup/backup.module.js';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { QuestDbModule } from './questdb/questdb.module.js';
     NotificationsModule,
     CoursesModule,
     QuestDbModule,
+    BackupModule,
   ],
   controllers: [AppController],
   providers: [AppService],
