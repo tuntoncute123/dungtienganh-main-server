@@ -41,8 +41,8 @@ export class UploadFileHandler implements ICommandHandler<UploadFileCommand> {
   }
 
   /**
-   * Multipart Upload: đọc file từ disk theo từng chunk 10MB
-   * và upload lên R2. RAM cố định ~10MB bất kể file lớn đến đâu.
+   * Multipart Upload: đọc file từ disk theo từng chunk 40MB
+   * và upload song song lên R2. RAM cố định ~120MB (3 chunks song song) bất kể file lớn đến đâu.
    */
   private async uploadMultipart(
     s3Client: S3Client,
@@ -62,41 +62,64 @@ export class UploadFileHandler implements ICommandHandler<UploadFileCommand> {
     const uploadId = createResult.UploadId!;
     const parts: { ETag: string; PartNumber: number }[] = [];
 
+    const fileHandle = await fs.open(filePath, 'r');
     try {
-      // Bước 2: Đọc file từ disk theo chunk 10MB và upload từng phần
-      const fileHandle = await fs.open(filePath, 'r');
       const fileSize = (await fileHandle.stat()).size;
-      let partNumber = 1;
-      let offset = 0;
+      const totalParts = Math.ceil(fileSize / CHUNK_SIZE);
+      let nextPartNumber = 1;
+      const activeUploads: Promise<void>[] = [];
+      const concurrency = 3; // Tải 3 part song song để tối ưu hóa băng thông VPS -> R2
 
-      console.log(`[Multipart] Starting upload: ${key} (${(fileSize / 1024 / 1024).toFixed(1)}MB)`);
+      console.log(`[Multipart] Starting parallel upload: ${key} (${(fileSize / 1024 / 1024).toFixed(1)}MB)`);
 
-      while (offset < fileSize) {
+      const uploadNext = async (): Promise<void> => {
+        if (nextPartNumber > totalParts) return;
+        const partNumber = nextPartNumber++;
+        const offset = (partNumber - 1) * CHUNK_SIZE;
         const chunkSize = Math.min(CHUNK_SIZE, fileSize - offset);
+        
         const chunk = new Uint8Array(chunkSize);
         await fileHandle.read(chunk, 0, chunkSize, offset);
 
-        const partResult = await s3Client.send(
-          new UploadPartCommand({
-            Bucket: bucket,
-            Key: key,
-            UploadId: uploadId,
-            PartNumber: partNumber,
-            Body: chunk,
-            ContentLength: chunkSize,
-          }),
-        );
+        const performPartUpload = async (retries = 3): Promise<void> => {
+          try {
+            const partResult = await s3Client.send(
+              new UploadPartCommand({
+                Bucket: bucket,
+                Key: key,
+                UploadId: uploadId,
+                PartNumber: partNumber,
+                Body: chunk,
+                ContentLength: chunkSize,
+              }),
+            );
+            parts.push({ ETag: partResult.ETag!, PartNumber: partNumber });
+            console.log(
+              `[Multipart] Part ${partNumber}/${totalParts} uploaded (${(chunkSize / 1024 / 1024).toFixed(1)}MB)`,
+            );
+          } catch (err) {
+            if (retries > 0) {
+              console.warn(`[Multipart] Retry part ${partNumber} (attempts left: ${retries})`);
+              return performPartUpload(retries - 1);
+            }
+            throw err;
+          }
+        };
 
-        parts.push({ ETag: partResult.ETag!, PartNumber: partNumber });
-        console.log(
-          `[Multipart] Part ${partNumber} uploaded (${(offset / 1024 / 1024).toFixed(1)}MB / ${(fileSize / 1024 / 1024).toFixed(1)}MB)`,
-        );
+        await performPartUpload();
+        return uploadNext();
+      };
 
-        offset += chunkSize;
-        partNumber++;
+      // Khởi chạy các luồng song song
+      for (let i = 0; i < Math.min(concurrency, totalParts); i++) {
+        activeUploads.push(uploadNext());
       }
 
+      await Promise.all(activeUploads);
       await fileHandle.close();
+
+      // Sắp xếp lại danh sách các phần theo đúng thứ tự PartNumber (Bắt buộc đối với AWS S3/R2)
+      parts.sort((a, b) => a.PartNumber - b.PartNumber);
 
       // Bước 3: Hoàn tất — R2 ghép các phần lại thành file hoàn chỉnh
       await s3Client.send(
@@ -110,7 +133,7 @@ export class UploadFileHandler implements ICommandHandler<UploadFileCommand> {
 
       console.log(`[Multipart] Upload complete: ${key}`);
     } catch (error) {
-      // Nếu lỗi → Abort để tránh bị tính phí cho các phần đã upload
+      await fileHandle.close().catch(() => {});
       console.error(`[Multipart] Error, aborting upload: ${key}`);
       await s3Client
         .send(new AbortMultipartUploadCommand({ Bucket: bucket, Key: key, UploadId: uploadId }))
