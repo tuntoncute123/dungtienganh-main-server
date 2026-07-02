@@ -13,6 +13,7 @@ import { ExamsModule } from './exams/exams.module.js';
 import { UploadModule } from './upload/upload.module.js';
 import { NotificationsModule } from './notifications/notifications.module.js';
 import { CoursesModule } from './courses/courses.module.js';
+import { QuestDbModule } from './questdb/questdb.module.js';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { CoursesModule } from './courses/courses.module.js';
     UploadModule,
     NotificationsModule,
     CoursesModule,
+    QuestDbModule,
   ],
   controllers: [AppController],
   providers: [AppService],
